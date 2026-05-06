@@ -1,0 +1,3192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ObediTrack - FCI Obedience</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>&#x1f43e;</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'DM Sans',-apple-system,sans-serif}#root{min-height:100vh}</style>
+</head>
+<body>
+<div id="root"><p style="padding:40px;text-align:center;font-family:sans-serif">Loading ObediTrack...</p></div>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+(function(){
+var React=window.React,ReactDOM=window.ReactDOM;
+if(!React||!ReactDOM){document.getElementById("root").innerHTML="<p style=\"padding:40px;text-align:center;font-family:sans-serif\">Loading React... If this persists, check your internet connection.</p>";return;}
+var useState=React.useState,useRef=React.useRef,useEffect=React.useEffect,useCallback=React.useCallback,useMemo=React.useMemo;
+/* ═══════════════════════════════════════════════════════════
+   TRANSLATIONS (ES / EN / NO)
+═══════════════════════════════════════════════════════════ */
+const T = {
+  es: {
+    appTitle: "ObediTrack",
+    appSub: "Asistente FCI Obediencia",
+    tabs: {
+      config: "⚙ Ring",
+      course: "📐 Pista",
+      heel: "🐾 Conducción",
+      steward: "🎙 Comisario",
+      score: "📊 Puntaje"
+    },
+    config: {
+      title: "Configuración del Ring",
+      width: "Ancho (m)",
+      height: "Largo (m)",
+      entry: "Entrada",
+      side: "Lado",
+      pos: "Posición (%)",
+      start: "Confirmar Ring",
+      edit: "✏ Editar",
+      done: "✓ Configurado →",
+      entryLeft: "Izquierda",
+      entryRight: "Derecha",
+      entryTop: "Arriba",
+      entryBottom: "Abajo",
+      compass: "Orientación",
+      compassN: "Norte arriba",
+      compassS: "Sur arriba",
+      compassE: "Este arriba",
+      compassW: "Oeste arriba"
+    },
+    cls: {
+      label: "Clase",
+      select: "Selecciona clase"
+    },
+    course: {
+      suggest: "⚡ Sugerir",
+      exportImg: "📷 Exportar",
+      clear: "🗑 Limpiar",
+      rotate: "↻ 45°",
+      delete: "🗑 Quitar",
+      noConfig: "Configura el ring primero",
+      dragHint: "Arrastra para mover · clic para seleccionar",
+      orderUp: "▲",
+      orderDn: "▼"
+    },
+    heel: {
+      title: "Conducción",
+      normal: "Normal",
+      slow: "Lento",
+      fast: "Rápido",
+      backward: "Atrás",
+      halt: "Alto",
+      rightTurn: "Giro a la derecha",
+      leftTurn: "Giro a la izquierda",
+      aboutTurn: "Media vuelta",
+      command: "Comando",
+      recall: "Llamado",
+      stepsLeft: "Pasos Izq",
+      stepsRight: "Pasos Der",
+      stepsFwd: "Pasos Adelante",
+      stepsBack: "Pasos Atrás",
+      undo: "↩",
+      clearPath: "🗑",
+      autoRoute: "⚡ Auto",
+      legend: "📖",
+      exportImg: "📷",
+      playAudio: "🔊 Narrar",
+      stopAudio: "⏹ Parar",
+      noConfig: "Configura el ring",
+      inicio: "Inicio",
+      fin: "Fin"
+    },
+    steward: {
+      title: "Guía de Comisario",
+      tabScript: "🎙 Libreto",
+      tabRef: "📚 Reglamento"
+    },
+    score: {
+      title: "Hoja de Calificación",
+      handler: "Guía",
+      dog: "Perro",
+      exercise: "Ejercicio",
+      coeff: "Coef.",
+      grade: "Nota",
+      points: "Puntos",
+      total: "Total",
+      pct: "%",
+      result: "Resultado",
+      excellent: "Excelente",
+      veryGood: "Muy Bueno",
+      good: "Bueno",
+      notClassified: "No Clasificado",
+      reset: "Reiniciar",
+      exportTxt: "📋 Copiar",
+      exportImg: "📷 Imagen",
+      validGrades: "Notas: 0, 5–10 (pasos 0.5)"
+    },
+    lang: "Idioma"
+  },
+  en: {
+    appTitle: "ObediTrack",
+    appSub: "FCI Obedience Assistant",
+    tabs: {
+      config: "⚙ Ring",
+      course: "📐 Course",
+      heel: "🐾 Heelwork",
+      steward: "🎙 Steward",
+      score: "📊 Score"
+    },
+    config: {
+      title: "Ring Configuration",
+      width: "Width (m)",
+      height: "Length (m)",
+      entry: "Entry",
+      side: "Side",
+      pos: "Position (%)",
+      start: "Confirm Ring",
+      edit: "✏ Edit",
+      done: "✓ Configured →",
+      entryLeft: "Left",
+      entryRight: "Right",
+      entryTop: "Top",
+      entryBottom: "Bottom",
+      compass: "Orientation",
+      compassN: "North up",
+      compassS: "South up",
+      compassE: "East up",
+      compassW: "West up"
+    },
+    cls: {
+      label: "Class",
+      select: "Select class"
+    },
+    course: {
+      suggest: "⚡ Suggest",
+      exportImg: "📷 Export",
+      clear: "🗑 Clear",
+      rotate: "↻ 45°",
+      delete: "🗑 Remove",
+      noConfig: "Configure ring first",
+      dragHint: "Drag to move · click to select",
+      orderUp: "▲",
+      orderDn: "▼"
+    },
+    heel: {
+      title: "Heelwork",
+      normal: "Normal",
+      slow: "Slow",
+      fast: "Fast",
+      backward: "Backward",
+      halt: "Halt",
+      rightTurn: "Right turn",
+      leftTurn: "Left turn",
+      aboutTurn: "About-turn",
+      command: "Command",
+      recall: "Recall",
+      stepsLeft: "Steps Left",
+      stepsRight: "Steps Right",
+      stepsFwd: "Steps Fwd",
+      stepsBack: "Steps Back",
+      undo: "↩",
+      clearPath: "🗑",
+      autoRoute: "⚡ Auto",
+      legend: "📖",
+      exportImg: "📷",
+      playAudio: "🔊 Narrate",
+      stopAudio: "⏹ Stop",
+      noConfig: "Configure ring first",
+      inicio: "Start",
+      fin: "End"
+    },
+    steward: {
+      title: "Steward Guide",
+      tabScript: "🎙 Script",
+      tabRef: "📚 Rules"
+    },
+    score: {
+      title: "Score Sheet",
+      handler: "Handler",
+      dog: "Dog",
+      exercise: "Exercise",
+      coeff: "Coeff.",
+      grade: "Grade",
+      points: "Points",
+      total: "Total",
+      pct: "%",
+      result: "Result",
+      excellent: "Excellent",
+      veryGood: "Very Good",
+      good: "Good",
+      notClassified: "Not Classified",
+      reset: "Reset",
+      exportTxt: "📋 Copy",
+      exportImg: "📷 Image",
+      validGrades: "Grades: 0, 5–10 (0.5 steps)"
+    },
+    lang: "Language"
+  },
+  no: {
+    appTitle: "ObediTrack",
+    appSub: "FCI Lydighet Assistent",
+    tabs: {
+      config: "⚙ Ring",
+      course: "📐 Bane",
+      heel: "🐾 Fot",
+      steward: "🎙 Ringsjef",
+      score: "📊 Poeng"
+    },
+    config: {
+      title: "Ring Konfigurasjon",
+      width: "Bredde (m)",
+      height: "Lengde (m)",
+      entry: "Inngang",
+      side: "Side",
+      pos: "Posisjon (%)",
+      start: "Bekreft Ring",
+      edit: "✏ Rediger",
+      done: "✓ Konfigurert →",
+      entryLeft: "Venstre",
+      entryRight: "Høyre",
+      entryTop: "Topp",
+      entryBottom: "Bunn",
+      compass: "Orientering",
+      compassN: "Nord opp",
+      compassS: "Sør opp",
+      compassE: "Øst opp",
+      compassW: "Vest opp"
+    },
+    cls: {
+      label: "Klasse",
+      select: "Velg klasse"
+    },
+    course: {
+      suggest: "⚡ Foreslå",
+      exportImg: "📷 Eksporter",
+      clear: "🗑 Tøm",
+      rotate: "↻ 45°",
+      delete: "🗑 Fjern",
+      noConfig: "Konfigurer ring først",
+      dragHint: "Dra for å flytte · klikk for å velge",
+      orderUp: "▲",
+      orderDn: "▼"
+    },
+    heel: {
+      title: "Fot",
+      normal: "Normal",
+      slow: "Langsom",
+      fast: "Hurtig",
+      backward: "Bakover",
+      halt: "Stopp",
+      rightTurn: "Høyre sving",
+      leftTurn: "Venstre sving",
+      aboutTurn: "Helomvending",
+      command: "Kommando",
+      recall: "Innkalling",
+      stepsLeft: "Skritt V",
+      stepsRight: "Skritt H",
+      stepsFwd: "Skritt Frem",
+      stepsBack: "Skritt Tilbake",
+      undo: "↩",
+      clearPath: "🗑",
+      autoRoute: "⚡ Auto",
+      legend: "📖",
+      exportImg: "📷",
+      playAudio: "🔊 Les opp",
+      stopAudio: "⏹ Stopp",
+      noConfig: "Konfigurer ring først",
+      inicio: "Start",
+      fin: "Slutt"
+    },
+    steward: {
+      title: "Ringsjef Guide",
+      tabScript: "🎙 Manus",
+      tabRef: "📚 Regler"
+    },
+    score: {
+      title: "Bedømmelsesark",
+      handler: "Fører",
+      dog: "Hund",
+      exercise: "Øvelse",
+      coeff: "Koeff.",
+      grade: "Karakter",
+      points: "Poeng",
+      total: "Total",
+      pct: "%",
+      result: "Resultat",
+      excellent: "Utmerket",
+      veryGood: "Meget God",
+      good: "God",
+      notClassified: "Ikke Klassifisert",
+      reset: "Tilbakestill",
+      exportTxt: "📋 Kopi",
+      exportImg: "📷 Bilde",
+      validGrades: "Karakterer: 0, 5–10 (0.5 trinn)"
+    },
+    lang: "Språk"
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   EXERCISE DATA — FCI standard names, layouts, steward scripts
+   Each exercise layout: elements[] with dx,dy in METERS from anchor
+═══════════════════════════════════════════════════════════ */
+function ex(id, num, names, coeff, color, layout, stewardScript, opts) {
+  return {
+    id,
+    num,
+    name: names,
+    coeff,
+    color,
+    layout,
+    stewardScript,
+    ...(opts || {})
+  };
+}
+
+// Layout element constructors
+const E = {
+  start: (dx, dy) => ({
+    t: "start",
+    dx,
+    dy
+  }),
+  handler: (dx, dy) => ({
+    t: "handler",
+    dx,
+    dy
+  }),
+  line: (x1, y1, x2, y2, label) => ({
+    t: "line",
+    x1,
+    y1,
+    x2,
+    y2,
+    label
+  }),
+  arrow: (x1, y1, x2, y2) => ({
+    t: "arrow",
+    x1,
+    y1,
+    x2,
+    y2
+  }),
+  box: (dx, dy, size) => ({
+    t: "box",
+    dx,
+    dy,
+    size: size || 3
+  }),
+  circle: (dx, dy, r) => ({
+    t: "circle",
+    dx,
+    dy,
+    r
+  }),
+  hurdle: (dx, dy, angle) => ({
+    t: "hurdle",
+    dx,
+    dy,
+    angle: angle || 0
+  }),
+  cones: (dx, dy) => ({
+    t: "cones",
+    dx,
+    dy
+  }),
+  dumbbell: (dx, dy) => ({
+    t: "dumbbell",
+    dx,
+    dy
+  }),
+  scent: (dx, dy, n) => ({
+    t: "scent",
+    dx,
+    dy,
+    n: n || 6
+  }),
+  dogs: (dx, dy, n) => ({
+    t: "dogs",
+    dx,
+    dy,
+    n: n || 4
+  }),
+  posSign: (dx, dy) => ({
+    t: "posSign",
+    dx,
+    dy
+  }),
+  label: (dx, dy, text) => ({
+    t: "label",
+    dx,
+    dy,
+    text
+  })
+};
+const EXERCISES = {
+  "Debut": [ex("d1", "D.1", {
+    es: "Junto",
+    en: "Heelwork",
+    no: "Fot"
+  }, 3, "#1565c0", [], {
+    es: "Comisario: «Inicio del ejercicio. Adelante.» Indica giros, altos, pasos. «Ejercicio terminado.»",
+    en: "Steward: 'Start exercise. Forward.' Indicate turns, halts, steps. 'Exercise finished.'",
+    no: "Ringsjef: «Start øvelsen. Fremover.» Signal svinger, stopp. «Øvelsen er ferdig.»"
+  }, {
+    isHeelwork: true
+  }), ex("d2", "D.2", {
+    es: "Posición sobre la marcha",
+    en: "Position under march",
+    no: "Posisjon under marsj"
+  }, 4, "#6d4c41", [E.start(0, 0), E.arrow(0, 0, 0, -10), E.posSign(0, -5), E.handler(0, -10), E.label(1, -5, "10m")], {
+    es: "«Inicio del ejercicio. Adelante.» — «Ordene la posición.» El guía ordena (pie/sentado/tumbado) sin detenerse y continúa 10m. — «Dese la vuelta.» — «Regrese al perro.» Pasa al perro por la izquierda, gira detrás. — «Ordene junto.» — «Ejercicio terminado.»",
+    en: "'Start. Forward.' — 'Command the position.' Handler commands stand/sit/down without stopping, walks 10m. — 'Turn around.' — 'Return to dog.' Pass dog on left, turn behind. — 'Command heel.' — 'Exercise finished.'",
+    no: "«Start. Fremover.» — «Gi posisjon.» Fører gir stå/sitt/ligg uten å stoppe, går 10m. — «Snu.» — «Gå tilbake.» Passér hunden på venstre, snu bak. — «Kommandér fot.» — «Øvelsen er ferdig.»"
+  }), ex("d3", "D.3", {
+    es: "Llamada",
+    en: "Recall",
+    no: "Innkalling"
+  }, 4, "#e65100", [E.start(0, 0), E.line(0, 0, 0, -20, "20m"), E.handler(0, -20), E.arrow(0, -1, 0, -19)], {
+    es: "«Inicio del ejercicio. Ordene a su perro que se tumbe.» — «Camine al punto indicado.» El guía camina 20m, se da la vuelta. — «Llame a su perro.» El perro debe ir directo al guía, posición de junto. — «Ejercicio terminado.»",
+    en: "'Start. Command your dog down.' — 'Walk to the indicated point.' Handler walks 20m, turns. — 'Call your dog.' Dog goes straight to handler, heel position. — 'Exercise finished.'",
+    no: "«Start. Kommandér hunden ligg.» — «Gå til angitt punkt.» Fører går 20m, snur. — «Kall inn hunden.» — «Øvelsen er ferdig.»"
+  }), ex("d4", "D.4", {
+    es: "Sujetar un objeto",
+    en: "Hold an object",
+    no: "Holde gjenstand"
+  }, 4, "#00695c", [E.start(0, 0), E.dumbbell(1, 0), E.handler(0, -2), E.line(0, 0, 0, -2, "2m")], {
+    es: "«Inicio del ejercicio.» El comisario entrega el apport al guía. — «Entregue el apport a su perro.» — «Aléjese 2 metros.» — «Llame a su perro al junto.» — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start.' Steward gives dumbbell to handler. — 'Give dumbbell to dog.' — 'Walk 2 meters away.' — 'Call your dog to heel.' — 'Command drop.' — 'Exercise finished.'",
+    no: "«Start.» Ringsjef gir apport. — «Gi apport til hunden.» — «Gå 2 meter.» — «Kall inn hunden.» — «Kommandér slipp.» — «Øvelsen er ferdig.»"
+  }), ex("d5", "D.5", {
+    es: "Control a distancia",
+    en: "Distance control",
+    no: "Avstandskontroll"
+  }, 4, "#1a237e", [E.start(0, 0), E.posSign(0, 0), E.line(0, 0, 0, -3, "3m"), E.handler(0, -3), E.label(-1, -1.5, "🐕")], {
+    es: "«Inicio del ejercicio. Ordene a su perro que se tumbe.» — «Camine al punto indicado (3m).» El guía se posiciona de frente al perro. El comisario muestra las posiciones (sentado/tumbado) con señales cada 3 segundos. — «Regrese al perro.» — «Ordene que se siente.» — «Ejercicio terminado.»",
+    en: "'Start. Command your dog down.' — 'Walk to position (3m).' Handler faces dog. Steward shows positions (sit/down) with signs every 3 sec. — 'Return to dog.' — 'Command sit.' — 'Exercise finished.'",
+    no: "«Start. Kommandér ligg.» — «Gå til posisjon (3m).» Ringsjef viser posisjoner hver 3. sek. — «Gå tilbake.» — «Kommandér sitt.» — «Øvelsen er ferdig.»"
+  }), ex("d6", "D.6", {
+    es: "Llamada con salto abierto",
+    en: "Recall over open hurdle",
+    no: "Innkalling over åpent hinder"
+  }, 4, "#ad1457", [E.start(0, 0), E.hurdle(0, -3, 0), E.line(0, 0, 0, -3, "3m"), E.handler(0, -6), E.line(0, -3, 0, -6, "3m"), E.arrow(0, -5.5, 0, -3.5)], {
+    es: "«Inicio del ejercicio. Ordene quieto.» — «Camine al otro lado del salto (3m).» — «Cuando le indique, llame a su perro.» El perro salta la valla y va al junto. — «Ejercicio terminado.»",
+    en: "'Start. Command stay.' — 'Walk to the other side (3m).' — 'When indicated, call your dog.' Dog jumps hurdle to heel. — 'Exercise finished.'",
+    no: "«Start. Kommandér bli.» — «Gå til andre siden (3m).» — «Kall inn hunden.» Hunden hopper og går til fot. — «Øvelsen er ferdig.»"
+  }), ex("d7", "D.7", {
+    es: "Envío alrededor de un cono",
+    en: "Send around cone",
+    no: "Sending rundt kjegle"
+  }, 4, "#e65100", [E.start(0, 0), E.cones(0, -3), E.line(0, 0, 0, -3, "3m"), E.arrow(0, -0.5, 0, -2.5)], {
+    es: "«Inicio del ejercicio. Envíe a su perro.» El guía envía al perro a rodear el cono y volver al junto. — «Ejercicio terminado.»",
+    en: "'Start. Send your dog.' Handler sends dog around cone, dog returns to heel. — 'Exercise finished.'",
+    no: "«Start. Send hunden.» Fører sender hunden rundt kjeglen. — «Øvelsen er ferdig.»"
+  }), ex("d8", "D.8", {
+    es: "Permanencia sentado 30s",
+    en: "Stay sit 30 seconds",
+    no: "Sitt 30 sekunder"
+  }, 3, "#455a64", [E.start(0, 0), E.dogs(0, 0, 1), E.line(0, 0, 0, -10, "10m"), E.handler(0, -10)], {
+    es: "«Inicio del ejercicio. Ordene a su perro sentado y quieto.» — «Camine 10 metros.» El guía espera 30 segundos de frente al perro. — «Regrese al perro.» — «Ejercicio terminado.»",
+    en: "'Start. Command sit and stay.' — 'Walk 10 meters.' Handler waits 30s facing dog. — 'Return.' — 'Exercise finished.'",
+    no: "«Start. Kommandér sitt og bli.» — «Gå 10 meter.» Fører venter 30s. — «Gå tilbake.» — «Øvelsen er ferdig.»"
+  }), ex("d9", "D.9", {
+    es: "Impresión general",
+    en: "General impression",
+    no: "Helhetsinntrykk"
+  }, 2, "#78909c", [], {
+    es: "Evaluación continua durante toda la prueba: disposición del perro, trabajo en equipo, espíritu deportivo.",
+    en: "Continuous evaluation: dog's willingness, teamwork, sportsmanship.",
+    no: "Kontinuerlig vurdering: hundens vilje, samarbeid, sportsånd."
+  }, {
+    noCanvas: true
+  })],
+  "1": [ex("c1_1", "1.1", {
+    es: "Sentado en grupo 1 min, guía a la vista",
+    en: "Group sit 1 min, handler in sight",
+    no: "Gruppsitt 1 min, fører i syne"
+  }, 3, "#455a64", [E.dogs(0, 0, 4), E.line(0, 0, 0, -15, "15m"), E.handler(0, -15)], {
+    es: "«Coloquen a sus perros en posición de sentado.» — «Dejen a sus perros.» Los guías caminan 15m, se dan la vuelta. — (1 minuto) — «Regresen con sus perros.» Cada guía pasa por la derecha, detrás del perro, se coloca al lado. — «Ejercicio terminado.»",
+    en: "'Place your dogs in sit position.' — 'Leave your dogs.' Handlers walk 15m, turn. — (1 min) — 'Return to your dogs.' Each handler passes right, behind dog, stands beside. — 'Exercise finished.'",
+    no: "«Plasser hundene i sitt.» — «Forlat hundene.» Førere går 15m, snur. — (1 min) — «Gå tilbake.» — «Øvelsen er ferdig.»"
+  }), ex("c1_2", "1.2", {
+    es: "Junto",
+    en: "Heelwork",
+    no: "Fot"
+  }, 4, "#1565c0", [], {
+    es: "«Inicio del ejercicio. Adelante.» — «Paso rápido.» (solo giros a la derecha) — «Paso normal.» — «Giro a la izquierda.» — «Giro a la derecha.» — «Cambio de sentido.» — «Alto.» — «Dos pasos adelante.» — «Dos pasos atrás.» — «Alto.» — «Ejercicio terminado.»",
+    en: "'Start. Forward.' — 'Fast pace.' (right turns only) — 'Normal pace.' — 'Left turn.' — 'Right turn.' — 'About-turn.' — 'Halt.' — 'Two steps forward.' — 'Two steps back.' — 'Halt.' — 'Exercise finished.'",
+    no: "«Start. Fremover.» — «Hurtig tempo.» — «Normalt.» — «Venstre sving.» — «Høyre sving.» — «Helomvending.» — «Stopp.» — «To skritt frem.» — «To skritt tilbake.» — «Øvelsen er ferdig.»"
+  }, {
+    isHeelwork: true
+  }), ex("c1_3", "1.3", {
+    es: "De pie o sentado o tumbado sobre la marcha",
+    en: "Stand or sit or down under march",
+    no: "Stå eller sitt eller ligg under marsj"
+  }, 3, "#6d4c41", [E.start(0, 0), E.arrow(0, 0, 0, -10), E.posSign(0, -5), E.handler(0, -10), E.line(0.8, -2.5, 0.8, -7.5, "10m")], {
+    es: "«Inicio del ejercicio. Adelante.» — «Ordene la posición.» (El guía ordena pie/sentado/tumbado sin detenerse.) — «Continúe caminando hasta el punto indicado.» — «Dese la vuelta.» — (3 seg) — «Regrese al perro, pase por su izquierda.» — «Gire detrás del perro.» — «Ordene junto, continúe caminando.» — «Alto.» — «Ejercicio terminado.»",
+    en: "'Start. Forward.' — 'Command position.' (Handler commands without stopping.) — 'Continue to the marker.' — 'Turn around.' — (3 sec) — 'Return, pass dog on left.' — 'Turn behind dog.' — 'Command heel, continue.' — 'Halt.' — 'Exercise finished.'",
+    no: "«Start. Fremover.» — «Gi posisjon.» — «Fortsett til markøren.» — «Snu.» — «Gå tilbake, passér hunden.» — «Snu bak hunden.» — «Fot, fortsett.» — «Stopp.» — «Øvelsen er ferdig.»"
+  }), ex("c1_4", "1.4", {
+    es: "Llamada",
+    en: "Recall",
+    no: "Innkalling"
+  }, 3, "#e65100", [E.start(0, 0), E.line(0, 0, 0, -22, "20-25m"), E.handler(0, -22), E.arrow(0, -20, 0, -2), E.label(-1, 0, "🐕")], {
+    es: "«Inicio del ejercicio. Ordene a su perro que se tumbe.» — «Camine en la dirección indicada.» (El guía camina 20-25m, se da la vuelta independientemente.) — «Llame a su perro.» (El perro debe ir directo, posición de junto.) — «Ejercicio terminado.»",
+    en: "'Start. Command your dog down.' — 'Walk in the indicated direction.' (Handler walks 20-25m, turns independently.) — 'Call your dog.' (Dog goes straight to heel.) — 'Exercise finished.'",
+    no: "«Start. Kommandér ligg.» — «Gå i angitt retning.» (20-25m, snu.) — «Kall inn hunden.» — «Øvelsen er ferdig.»"
+  }), ex("c1_5", "1.5", {
+    es: "Envío al cuadrado y tumbado",
+    en: "Send to box and down",
+    no: "Sending til boks og ligg"
+  }, 4, "#c62828", [E.start(0, 0), E.line(0, 0, 0, -15, "15m"), E.box(0, -15, 3), E.arrow(0, -1, 0, -13)], {
+    es: "«Inicio del ejercicio. Envíe a su perro al cuadrado.» (El perro entra al cuadrado por el frente, en línea recta.) — «Ordene tumbado.» (Opcionalmente: «Ordene de pie» luego «Ordene tumbado».) — (3 seg, el perro debe permanecer.) — «Ejercicio terminado.»",
+    en: "'Start. Send your dog to the box.' (Dog enters from the front in a straight line.) — 'Command down.' (Optionally: 'Command stand' then 'Command down'.) — (3 sec, dog must stay.) — 'Exercise finished.'",
+    no: "«Start. Send hunden til boksen.» (Hunden går rett inn.) — «Kommandér ligg.» — «Øvelsen er ferdig.»"
+  }), ex("c1_6", "1.6", {
+    es: "Control a distancia",
+    en: "Distance control",
+    no: "Avstandskontroll"
+  }, 4, "#1a237e", [E.start(0, 0), E.posSign(0, 0), E.line(0, 0, 0, -5, "5m"), E.handler(0, -5), E.label(-1.5, 0, "🐕")], {
+    es: "«Inicio del ejercicio. Ordene a su perro que se tumbe.» — «Camine al punto indicado (5m).» (El guía queda de frente al perro.) El comisario muestra las posiciones: sentado, tumbado, de pie, tumbado, sentado, tumbado — señales cada 3 segundos. — «Regrese al perro.» — «Ordene que se siente.» — «Ejercicio terminado.»",
+    en: "'Start. Command down.' — 'Walk to position (5m).' Steward shows positions every 3 sec: sit, down, stand, down, sit, down. — 'Return to dog.' — 'Command sit.' — 'Exercise finished.'",
+    no: "«Start. Kommandér ligg.» — «Gå til posisjon (5m).» Ringsjef viser posisjoner. — «Gå tilbake.» — «Øvelsen er ferdig.»"
+  }), ex("c1_7", "1.7", {
+    es: "Cobro y salto de una valla",
+    en: "Retrieve over hurdle",
+    no: "Apport over hinder"
+  }, 3, "#ad1457", [E.start(0, 0), E.hurdle(0, -3, 0), E.dumbbell(0, -6), E.line(0.8, 0, 0.8, -3, "3m"), E.line(0.8, -3, 0.8, -6, "3m"), E.arrow(0, -1, 0, -5)], {
+    es: "«Inicio del ejercicio.» El comisario lanza el apport al otro lado de la valla (~3m). — «Ordene a su perro que traiga.» (El perro salta la valla, recoge el apport, salta de vuelta, se sienta al junto y entrega.) — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start.' Steward throws dumbbell over hurdle (~3m). — 'Command retrieve.' (Dog jumps, picks up, jumps back, sits at heel.) — 'Command drop.' — 'Exercise finished.'",
+    no: "«Start.» Ringsjef kaster apport over hinder. — «Kommandér apport.» — «Kommandér slipp.» — «Øvelsen er ferdig.»"
+  }), ex("c1_8", "1.8", {
+    es: "Envío alrededor de un grupo de conos/barril y vuelta",
+    en: "Send around cones/barrel and return",
+    no: "Sending rundt kjegler/tønne og tilbake"
+  }, 3, "#e65100", [E.start(0, 0), E.cones(0, -10), E.line(0.8, 0, 0.8, -10, "10m"), E.arrow(0, -1, 0, -9)], {
+    es: "«Inicio del ejercicio. Envíe a su perro.» (El perro corre alrededor de los conos en sentido horario o antihorario y regresa al guía, posición de junto.) — «Ejercicio terminado.»",
+    en: "'Start. Send your dog.' (Dog runs around cones clockwise or counterclockwise, returns to handler, heel position.) — 'Exercise finished.'",
+    no: "«Start. Send hunden.» (Hunden løper rundt kjeglene og tilbake til fot.) — «Øvelsen er ferdig.»"
+  }), ex("c1_9", "1.9", {
+    es: "Cobro directo",
+    en: "Direct retrieve",
+    no: "Direkte apport"
+  }, 3, "#00695c", [E.start(0, 0), E.dumbbell(0, -10), E.line(0.8, 0, 0.8, -10, "10m"), E.arrow(0, -1, 0, -9)], {
+    es: "«Inicio del ejercicio.» El comisario coloca el apport a 10m (horizontal o vertical según el juez). — «Ordene a su perro que traiga.» — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start.' Steward places dumbbell at 10m. — 'Command retrieve.' — 'Command drop.' — 'Exercise finished.'",
+    no: "«Start.» Ringsjef plasserer apport 10m. — «Kommandér apport.» — «Slipp.» — «Øvelsen er ferdig.»"
+  }), ex("c1_10", "1.10", {
+    es: "Impresión general",
+    en: "General impression",
+    no: "Helhetsinntrykk"
+  }, 2, "#78909c", [], {
+    es: "Evaluación continua: disposición del perro, trabajo en equipo, espíritu deportivo, actividades entre ejercicios.",
+    en: "Continuous: willingness, teamwork, sportsmanship, conduct between exercises.",
+    no: "Kontinuerlig: vilje, samarbeid, sportsånd, oppførsel mellom øvelser."
+  }, {
+    noCanvas: true
+  })],
+  "2": [ex("c2_1", "2.1", {
+    es: "Tumbado en grupo 2 min, guías fuera de vista",
+    en: "Group down 2 min, handlers out of sight",
+    no: "Gruppligg 2 min, førere ute av syne"
+  }, 3, "#455a64", [E.dogs(0, 0, 4), E.label(0, 2, "← fuera de vista")], {
+    es: "«Coloquen a sus perros tumbados.» — «Dejen a sus perros.» — «Salgan del ring.» (Guías salen, 2 min.) — «Regresen con sus perros.» — «Ejercicio terminado.»",
+    en: "'Place dogs down.' — 'Leave dogs.' — 'Leave the ring.' (2 min.) — 'Return.' — 'Exercise finished.'",
+    no: "«Legg hundene.» — «Forlat hundene.» — «Gå ut av ringen.» (2 min.) — «Gå tilbake.» — «Øvelsen er ferdig.»"
+  }), ex("c2_2", "2.2", {
+    es: "Junto",
+    en: "Heelwork",
+    no: "Fot"
+  }, 4, "#1565c0", [], {
+    es: "«Inicio del ejercicio. Adelante.» — «Paso rápido.» — «Paso normal.» — «Paso lento.» — «Paso normal.» — «Giro a la derecha.» — «Giro a la izquierda.» — «Cambio de sentido.» — «Alto.» — «Pasos atrás (5-8 pasos).» — «Alto.» — «Dos pasos a la derecha.» — «Dos pasos a la izquierda.» — «Ejercicio terminado.»",
+    en: "'Start. Forward.' — 'Fast.' — 'Normal.' — 'Slow.' — 'Normal.' — 'Right turn.' — 'Left turn.' — 'About-turn.' — 'Halt.' — 'Backward (5-8 steps).' — 'Halt.' — 'Steps right/left.' — 'Exercise finished.'",
+    no: "«Start. Fremover.» — «Hurtig.» — «Normalt.» — «Langsomt.» — «Høyre.» — «Venstre.» — «Helomvending.» — «Stopp.» — «Bakover.» — «Øvelsen er ferdig.»"
+  }, {
+    isHeelwork: true
+  }), ex("c2_3", "2.3", {
+    es: "De pie/sentado/tumbado sobre la marcha",
+    en: "Stand/sit/down under march",
+    no: "Stå/sitt/ligg under marsj"
+  }, 3, "#6d4c41", [E.start(0, 0), E.posSign(0, -5), E.arrow(0, 0, 10, 0), E.posSign(10, -5), E.line(0.5, -2.5, 0.5, -7.5, "5m"), E.label(5, 1, "10m")], {
+    es: "«Inicio del ejercicio. Adelante.» — «Ordene la primera posición.» (Sin detenerse, el guía deja al perro y continúa ~5m al punto de giro.) — «Dese la vuelta.» — «Regrese al perro, pase por la izquierda.» — «Gire detrás del perro.» — «Ordene junto sin detenerse.» — «Giro a la derecha/izquierda.» — «Ordene la segunda posición.» — (Mismo procedimiento.) — «Alto.» — «Ejercicio terminado.»",
+    en: "'Start. Forward.' — 'Command first position.' (Without stopping, handler continues ~5m.) — 'Turn around.' — 'Return, pass dog left.' — 'Turn behind.' — 'Heel without stopping.' — 'Turn.' — 'Command second position.' — 'Halt.' — 'Exercise finished.'",
+    no: "«Start. Fremover.» — «Gi første posisjon.» — «Snu.» — «Gå tilbake.» — «Snu bak.» — «Fot.» — «Gi andre posisjon.» — «Stopp.» — «Øvelsen er ferdig.»"
+  }), ex("c2_4", "2.4", {
+    es: "Llamada con parada de pie",
+    en: "Recall with stand",
+    no: "Innkalling med stå-stopp"
+  }, 3, "#e65100", [E.start(0, 0), E.line(0, 0, 0, -23, "20-25m"), E.posSign(0, -10), E.handler(0, -23), E.arrow(0, -21, 0, -2), E.label(-1, 0, "🐕")], {
+    es: "«Inicio del ejercicio. Ordene tumbado.» — «Camine al punto indicado (20-25m).» — «Dese la vuelta.» — «Llame a su perro.» — Cuando el perro ha recorrido aprox. la mitad: «Ordene de pie.» — (3 seg) — «Llame a su perro.» — «Ejercicio terminado.»",
+    en: "'Start. Command down.' — 'Walk to point (20-25m).' — 'Turn.' — 'Call dog.' — Halfway: 'Command stand.' — (3 sec) — 'Call dog.' — 'Exercise finished.'",
+    no: "«Start. Ligg.» — «Gå til punkt.» — «Snu.» — «Kall inn.» — Halvveis: «Stå.» — «Kall inn.» — «Øvelsen er ferdig.»"
+  }), ex("c2_5", "2.5", {
+    es: "Envío al cuadrado, tumbado y llamada",
+    en: "Send to box, down and recall",
+    no: "Sending til boks, ligg og innkalling"
+  }, 4, "#c62828", [E.start(0, 0), E.line(0, 0, 0, -23, "23m"), E.box(0, -23, 3), E.arrow(0, -1, 0, -21)], {
+    es: "«Inicio del ejercicio. Envíe a su perro al cuadrado.» — «Ordene de pie.» (Opcional) — «Ordene tumbado.» — (3 seg) — «Llame a su perro.» — (El perro viene directo al junto.) — «Ejercicio terminado.»",
+    en: "'Start. Send dog to box.' — 'Command stand.' (Optional) — 'Command down.' — (3 sec) — 'Call your dog.' — 'Exercise finished.'",
+    no: "«Start. Send til boks.» — «Stå.» — «Ligg.» — «Kall inn.» — «Øvelsen er ferdig.»"
+  }), ex("c2_6", "2.6", {
+    es: "Cobro con direcciones",
+    en: "Retrieve with directions",
+    no: "Apport med retninger"
+  }, 3, "#00695c", [E.start(0, 0), E.hurdle(-2.5, -5, 0), E.hurdle(2.5, -5, 0), E.dumbbell(-2.5, -11), E.dumbbell(0, -11), E.dumbbell(2.5, -11), E.line(-3, -5, 3, -5, "5m"), E.line(3, -5, 3, -11, "6m"), E.arrow(0, -1, 0, -5)], {
+    es: "«Inicio del ejercicio.» El comisario sortea la dirección (derecha/izquierda). — «Envíe a su perro: derecha/izquierda.» — «Ordene que salte.» — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start.' Steward draws direction. — 'Send dog: right/left.' — 'Command jump.' — 'Command drop.' — 'Exercise finished.'",
+    no: "«Start.» Retning trekkes. — «Send: høyre/venstre.» — «Hopp.» — «Slipp.» — «Øvelsen er ferdig.»"
+  }), ex("c2_7", "2.7", {
+    es: "Discriminación olfativa y cobro",
+    en: "Scent discrimination and retrieve",
+    no: "Luktdiskriminering og apport"
+  }, 3, "#4a148c", [E.start(0, 0), E.scent(0, -5, 6), E.line(0.8, 0, 0.8, -5, "5m"), E.arrow(0, -1, 0, -4)], {
+    es: "«Inicio del ejercicio.» El comisario entrega el objeto al guía para que lo toque. El comisario coloca el objeto entre los otros. — «Envíe a su perro.» — (El perro olfatea y trae el correcto.) — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start.' Steward gives object to handler to touch. Places it among others. — 'Send dog.' — (Dog scents, retrieves correct one.) — 'Command drop.' — 'Exercise finished.'",
+    no: "«Start.» Ringsjef gir gjenstand. Plasserer den. — «Send hunden.» — «Slipp.» — «Øvelsen er ferdig.»"
+  }), ex("c2_8", "2.8", {
+    es: "Control a distancia",
+    en: "Distance control",
+    no: "Avstandskontroll"
+  }, 4, "#1a237e", [E.start(0, 0), E.posSign(0, 0), E.line(0, 0, 0, -10, "10m"), E.handler(0, -10), E.label(-1.5, 0, "🐕")], {
+    es: "«Inicio. Ordene tumbado.» — «Camine al punto (10m).» El comisario muestra 6 posiciones (sentado, tumbado, de pie, tumbado, de pie, sentado, tumbado) con señales cada 3 seg. — «Regrese.» — «Ordene sentado.» — «Ejercicio terminado.»",
+    en: "'Start. Down.' — 'Walk to 10m.' Steward shows 6 positions every 3 sec. — 'Return.' — 'Sit.' — 'Exercise finished.'",
+    no: "«Start. Ligg.» — «Gå til 10m.» 6 posisjoner. — «Tilbake.» — «Sitt.» — «Øvelsen er ferdig.»"
+  }), ex("c2_9", "2.9", {
+    es: "Envío alrededor de conos/barril, parar y saltar",
+    en: "Send around cones, stop and jump hurdle",
+    no: "Sending rundt kjegler, stopp og hopp"
+  }, 3, "#e65100", [E.start(0, 0), E.cones(0, -10), E.hurdle(-3, -5, 0), E.hurdle(3, -5, 0), E.line(0.8, 0, 0.8, -10, "10m"), E.arrow(0, -1, 0, -9)], {
+    es: "«Inicio. Envíe a su perro.» — (El perro corre alrededor de los conos.) — «Ordene de pie/tumbado.» — «Derecha/Izquierda.» (Dirección sorteada.) — «Ordene que salte.» — «Ejercicio terminado.»",
+    en: "'Start. Send dog.' — (Dog goes around cones.) — 'Command stand/down.' — 'Right/Left.' — 'Command jump.' — 'Exercise finished.'",
+    no: "«Start. Send.» — «Stå/ligg.» — «Høyre/venstre.» — «Hopp.» — «Øvelsen er ferdig.»"
+  }), ex("c2_10", "2.10", {
+    es: "Impresión general",
+    en: "General impression",
+    no: "Helhetsinntrykk"
+  }, 2, "#78909c", [], {
+    es: "Evaluación continua.",
+    en: "Continuous evaluation.",
+    no: "Kontinuerlig vurdering."
+  }, {
+    noCanvas: true
+  })],
+  "3": [ex("c3_1", "3.1", {
+    es: "Sentado en grupo 2 min, guías fuera de vista",
+    en: "Group sit 2 min, handlers out of sight",
+    no: "Gruppsitt 2 min, førere ute av syne"
+  }, 2, "#455a64", [E.dogs(0, 0, 4), E.label(0, 2, "← fuera de vista")], {
+    es: "«Coloquen a sus perros sentados.» — «Dejen a sus perros, salgan del ring.» — (2 min) — «Regresen.» — «Ejercicio terminado.»",
+    en: "'Sit dogs.' — 'Leave ring.' — (2 min) — 'Return.' — 'Finished.'",
+    no: "«Sitt.» — «Forlat ringen.» — (2 min) — «Tilbake.» — «Ferdig.»"
+  }), ex("c3_2", "3.2", {
+    es: "Tumbado en grupo 1 min y llamada",
+    en: "Group down 1 min and recall",
+    no: "Gruppligg 1 min og innkalling"
+  }, 2, "#455a64", [E.dogs(0, 0, 4), E.line(0, 0, 0, -20, "20m"), E.handler(0, -20)], {
+    es: "«Coloquen a sus perros tumbados.» — «Dejen a sus perros, salgan del ring.» — (1 min) — «Regresen al ring.» — Los guías se colocan a 20m. — «Llamen a sus perros, uno por uno.» (Según indicación del comisario.) — «Ejercicio terminado.»",
+    en: "'Down dogs.' — 'Leave.' — (1 min) — 'Return to 20m.' — 'Call dogs one by one.' — 'Finished.'",
+    no: "«Ligg.» — «Forlat.» — (1 min) — «Tilbake til 20m.» — «Kall inn én og én.» — «Ferdig.»"
+  }), ex("c3_3", "3.3", {
+    es: "Junto",
+    en: "Heelwork",
+    no: "Fot"
+  }, 4, "#1565c0", [], {
+    es: "«Inicio del ejercicio. Adelante.» — «Paso rápido.» — «Giro a la derecha.» — «Paso normal.» — «Paso lento.» — «Paso normal.» — «Giro a la izquierda.» — «Cambio de sentido.» — «Alto.» — «Marcha atrás.» (5-10m, ~15-30 pasos.) — «Giro a la izquierda/derecha.» (durante marcha atrás) — «Alto.» — «Dos pasos adelante.» — «Dos pasos a la derecha.» — «Dos pasos a la izquierda.» — «Dos pasos atrás.» — «Alto.» — «Ejercicio terminado.»",
+    en: "'Start. Forward.' — 'Fast.' — 'Right turn.' — 'Normal.' — 'Slow.' — 'Normal.' — 'Left turn.' — 'About-turn.' — 'Halt.' — 'Backward (5-10m).' — 'Turn during backward.' — 'Halt.' — 'Steps forward/right/left/back.' — 'Halt.' — 'Finished.'",
+    no: "«Start. Fremover.» — «Hurtig.» — «Høyre.» — «Normalt.» — «Langsomt.» — «Venstre.» — «Helomvending.» — «Stopp.» — «Bakover 5-10m.» — «Sving under bakover.» — «Stopp.» — «Skritt.» — «Ferdig.»"
+  }, {
+    isHeelwork: true
+  }), ex("c3_4", "3.4", {
+    es: "De pie, sentado y tumbado sobre la marcha",
+    en: "Stand, sit and down under march",
+    no: "Stå, sitt og ligg under marsj"
+  }, 3, "#6d4c41", [E.start(0, 0), E.posSign(0, -5), E.posSign(5, -5), E.arrow(0, 0, 0, -5), E.arrow(0, -5, 5, -5), E.line(0.5, -2.5, 0.5, -7.5, "5m")], {
+    es: "(Integrado con 3.3) «Inicio del ejercicio de posiciones.» — «Adelante.» — «Ordene la primera posición.» (El guía ordena pie/sentado/tumbado sin detenerse, continúa 4-5m.) El comisario indica giro, llamada o regresar al perro según el esquema diseñado. — «Ordene la segunda posición.» — (Mismo procedimiento.) — «Alto. Fin del ejercicio de posiciones.»",
+    en: "(With 3.3) 'Start positions.' — 'Forward.' — 'Command first position.' (Handler continues 4-5m.) Steward indicates turns, recall or return. — 'Command second position.' — 'Halt. Positions finished.'",
+    no: "(Med 3.3) «Start posisjoner.» — «Gi første posisjon.» Fører fortsetter 4-5m. — «Gi andre posisjon.» — «Stopp. Posisjoner ferdig.»"
+  }), ex("c3_5", "3.5", {
+    es: "Llamada con parada de pie, sentado y tumbado",
+    en: "Recall with stand, sit and down",
+    no: "Innkalling med stå, sitt og ligg"
+  }, 3, "#e65100", [E.start(0, 0), E.posSign(0, -10), E.posSign(0, -20), E.line(0, 0, 0, -32, "30-35m"), E.handler(0, -32), E.arrow(0, -30, 0, -2), E.label(-1, 0, "🐕")], {
+    es: "«Inicio del ejercicio. Ordene tumbado.» — «Camine en la dirección indicada (30-35m).» — «Dese la vuelta.» — «Llame a su perro.» — Cuando el perro está a la altura del primer cono (~⅓): «Ordene la posición.» (El guía ordena independientemente pie/sentado/tumbado.) — (3 seg) — «Llame a su perro.» — A la altura del segundo cono (~⅔): «Ordene la posición.» — (3 seg) — «Llame a su perro al junto.» — «Ejercicio terminado.»",
+    en: "'Start. Command down.' — 'Walk 30-35m.' — 'Turn.' — 'Call dog.' — At ⅓: 'Command position.' — (3 sec) — 'Call.' — At ⅔: 'Command position.' — 'Call to heel.' — 'Finished.'",
+    no: "«Start. Ligg.» — «Gå 30-35m.» — «Snu.» — «Kall inn.» — Ved ⅓: «Posisjon.» — «Kall inn.» — Ved ⅔: «Posisjon.» — «Kall inn til fot.» — «Ferdig.»"
+  }), ex("c3_6", "3.6", {
+    es: "Enviar direccionando, tumbado y llamada",
+    en: "Send with directions, down and recall",
+    no: "Sending med retning, ligg og innkalling"
+  }, 4, "#2e7d32", [E.start(0, 0), E.circle(0, -10, 2), E.line(0, 0, 0, -10, "10m"), E.box(10, -10, 3), E.line(0, -10, 10, -10, "~15m"), E.arrow(0, -1, 0, -9), E.label(5, -11, "90°"), E.line(0, 0, 10, -10, "25m")], {
+    es: "«Inicio del ejercicio. Envíe a su perro al círculo.» — Cuando el perro entra: «Ordene de pie.» — «Envíe a su perro al cuadrado: derecha/izquierda.» — Cuando el perro llega: «Ordene de pie.» — «Ordene tumbado.» — (3 seg) — «Llame a su perro.» — «Ejercicio terminado.»",
+    en: "'Start. Send dog to circle.' — When in circle: 'Command stand.' — 'Send to box: right/left.' — At box: 'Command stand.' — 'Command down.' — (3 sec) — 'Call dog.' — 'Finished.'",
+    no: "«Start. Send til sirkel.» — «Stå.» — «Send til boks: høyre/venstre.» — «Stå.» — «Ligg.» — «Kall inn.» — «Ferdig.»"
+  }), ex("c3_7", "3.7", {
+    es: "Cobro con direcciones",
+    en: "Retrieve with directions",
+    no: "Apport med retninger"
+  }, 3, "#2196f3", [E.start(0, 0), E.hurdle(-2.5, -5, 0), E.hurdle(2.5, -5, 0), E.dumbbell(-2.5, -11), E.dumbbell(0, -11), E.dumbbell(2.5, -11), E.line(-3, -5, 3, -5, "5m"), E.line(3, -5, 3, -11, "6m"), E.arrow(0, -1, -2.5, -4.5), E.arrow(0, -1, 2.5, -4.5)], {
+    es: "«Inicio del ejercicio.» El comisario sortea la dirección. — «Derecha/Izquierda, ordene.» (El perro salta la valla indicada, recoge el apport correcto, salta la misma valla de vuelta, posición de junto.) — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start.' Direction drawn. — 'Right/Left, command.' (Dog jumps indicated hurdle, retrieves correct dumbbell, jumps back, heel.) — 'Command drop.' — 'Finished.'",
+    no: "«Start.» Retning trekkes. — «Høyre/venstre, kommandér.» — «Slipp.» — «Ferdig.»"
+  }), ex("c3_8", "3.8", {
+    es: "Envío alrededor de conos, parada, cobro y salto",
+    en: "Send around cones, stop, retrieve and jump",
+    no: "Sending rundt kjegler, stopp, apport og hopp"
+  }, 4, "#ff6f00", [E.start(0, 0), E.hurdle(-2.5, -3, 0), E.hurdle(2.5, -3, 0), E.cones(0, -18), E.dumbbell(-2.5, -9), E.dumbbell(2.5, -9), E.line(0.8, 0, 0.8, -18, "15m"), E.line(-3, -3, 3, -3, "5m"), E.arrow(0, -1, 0, -17)], {
+    es: "«Inicio del ejercicio. Envíe a su perro alrededor de los conos.» — (El perro rodea los conos.) — «Ordene de pie/sentado/tumbado.» (Posición determinada antes de la competencia.) — «Derecha/Izquierda, ordene.» (El comisario indica dirección sorteada. El perro corre al apport, lo recoge.) — «Ordene que salte.» (Salta la valla correspondiente.) — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start. Send around cones.' — 'Command stand/sit/down.' — 'Right/Left, command.' (Dog retrieves, jumps hurdle.) — 'Drop.' — 'Finished.'",
+    no: "«Start. Send rundt kjegler.» — «Stå/sitt/ligg.» — «Høyre/venstre.» — «Slipp.» — «Ferdig.»"
+  }), ex("c3_9", "3.9", {
+    es: "Discriminación olfativa y cobro",
+    en: "Scent discrimination and retrieve",
+    no: "Luktdiskriminering og apport"
+  }, 3, "#4a148c", [E.start(0, 0), E.scent(0, -5, 8), E.line(0.8, 0, 0.8, -5, "5m"), E.arrow(0, -1, 0, -4)], {
+    es: "«Inicio.» Comisario entrega objeto, guía lo toca, comisario lo coloca entre 8 objetos. — «Envíe a su perro.» — «Ordene que suelte.» — «Ejercicio terminado.»",
+    en: "'Start.' Steward gives object, handler touches, steward places among 8. — 'Send.' — 'Drop.' — 'Finished.'",
+    no: "«Start.» Gjenstand berøres, plasseres blant 8. — «Send.» — «Slipp.» — «Ferdig.»"
+  }), ex("c3_10", "3.10", {
+    es: "Control a distancia",
+    en: "Distance control",
+    no: "Avstandskontroll"
+  }, 4, "#c62828", [E.start(0, 0), E.posSign(0, 0), E.line(0, 0, 0, -15, "15m"), E.handler(0, -15), E.label(-1.5, 0, "🐕")], {
+    es: "«Inicio. Ordene tumbado.» — «Camine al punto (15m).» El comisario muestra 6 posiciones (sentado, tumbado, de pie, tumbado, de pie, sentado, tumbado) cada 3 seg. El guía da órdenes verbales y señales simultáneas. — «Regrese.» — «Ordene sentado.» — «Ejercicio terminado.»",
+    en: "'Start. Down.' — 'Walk 15m.' 6 positions every 3 sec. — 'Return.' — 'Sit.' — 'Finished.'",
+    no: "«Start. Ligg.» — «Gå 15m.» 6 posisjoner. — «Tilbake.» — «Sitt.» — «Ferdig.»"
+  })]
+};
+
+/* ═══════════════════════════════════════════════════════════
+   DRAWING ENGINE — renders exercise layouts at real scale
+═══════════════════════════════════════════════════════════ */
+function drawLayout(ctx, elems, ax, ay, rot, scale, color, sel) {
+  if (!elems || elems.length === 0) return;
+  ctx.save();
+  ctx.translate(ax, ay);
+  ctx.rotate((rot || 0) * Math.PI / 180);
+  if (sel) {
+    ctx.strokeStyle = "#ffc107";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.arc(0, 0, 8, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  const m = scale; // pixels per meter
+  elems.forEach(e => {
+    const px = (e.dx || 0) * m,
+      py = (e.dy || 0) * m;
+    switch (e.t) {
+      case "start":
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.25;
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 7px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("S", px, py + 2.5);
+        break;
+      case "handler":
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(px, py - 4, 3, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(px, py - 1);
+        ctx.lineTo(px, py + 6);
+        ctx.moveTo(px - 3, py + 2);
+        ctx.lineTo(px + 3, py + 2);
+        ctx.stroke();
+        break;
+      case "line":
+        ctx.strokeStyle = color + "88";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo((e.x1 || 0) * m, (e.y1 || 0) * m);
+        ctx.lineTo((e.x2 || 0) * m, (e.y2 || 0) * m);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        if (e.label) {
+          const mx = ((e.x1 || 0) + (e.x2 || 0)) / 2 * m + 8,
+            my = ((e.y1 || 0) + (e.y2 || 0)) / 2 * m;
+          ctx.fillStyle = color;
+          ctx.font = "bold 7px sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText(e.label, mx, my + 3);
+        }
+        break;
+      case "arrow":
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        const ax1 = (e.x1 || 0) * m,
+          ay1 = (e.y1 || 0) * m,
+          ax2 = (e.x2 || 0) * m,
+          ay2 = (e.y2 || 0) * m;
+        ctx.beginPath();
+        ctx.moveTo(ax1, ay1);
+        ctx.lineTo(ax2, ay2);
+        ctx.stroke();
+        const ang = Math.atan2(ay2 - ay1, ax2 - ax1);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(ax2, ay2);
+        ctx.lineTo(ax2 - 5 * Math.cos(ang - 0.4), ay2 - 5 * Math.sin(ang - 0.4));
+        ctx.lineTo(ax2 - 5 * Math.cos(ang + 0.4), ay2 - 5 * Math.sin(ang + 0.4));
+        ctx.closePath();
+        ctx.fill();
+        break;
+      case "box":
+        const bs = (e.size || 3) * m;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(px - bs / 2, py - bs / 2, bs, bs);
+        [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(([cx, cy]) => {
+          ctx.fillStyle = "#ff6f00";
+          ctx.beginPath();
+          ctx.moveTo(px + cx * bs / 2, py + cy * bs / 2 - 4);
+          ctx.lineTo(px + cx * bs / 2 - 3, py + cy * bs / 2 + 2);
+          ctx.lineTo(px + cx * bs / 2 + 3, py + cy * bs / 2 + 2);
+          ctx.closePath();
+          ctx.fill();
+        });
+        break;
+      case "circle":
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 3]);
+        ctx.beginPath();
+        ctx.arc(px, py, (e.r || 2) * m, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        break;
+      case "hurdle":
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate((e.angle || 0) * Math.PI / 180);
+        const hw = 2 * m;
+        ctx.fillStyle = "#666";
+        ctx.fillRect(-hw / 2, -3, 3, 6);
+        ctx.fillRect(hw / 2 - 3, -3, 3, 6);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(-hw / 2 + 2, 0);
+        ctx.lineTo(hw / 2 - 2, 0);
+        ctx.stroke();
+        ctx.restore();
+        break;
+      case "cones":
+        const cp = [[-0.3, -0.3], [0, -0.35], [0.3, -0.3], [-0.15, 0.1], [0.15, 0.1], [0, 0.3]];
+        cp.forEach(([cx, cy]) => {
+          ctx.fillStyle = "#ff6f00";
+          ctx.beginPath();
+          ctx.moveTo(px + cx * m, py + cy * m - 4);
+          ctx.lineTo(px + cx * m - 3, py + cy * m + 2);
+          ctx.lineTo(px + cx * m + 3, py + cy * m + 2);
+          ctx.closePath();
+          ctx.fill();
+        });
+        ctx.strokeStyle = "#e6510044";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 2]);
+        ctx.strokeRect(px - 0.4 * m, py - 0.4 * m, 0.8 * m, 0.7 * m);
+        ctx.setLineDash([]);
+        break;
+      case "dumbbell":
+        ctx.fillStyle = "#8d6e63";
+        ctx.fillRect(px - 6, py - 1.5, 12, 3);
+        ctx.fillStyle = "#5d4037";
+        ctx.fillRect(px - 8, py - 3, 3, 6);
+        ctx.fillRect(px + 5, py - 3, 3, 6);
+        break;
+      case "scent":
+        for (let i = 0; i < (e.n || 6); i++) {
+          ctx.fillStyle = i === 2 ? color : "#a1887f";
+          ctx.fillRect(px - (e.n || 6) * 3 + i * 6, py, 4, 8);
+        }
+        break;
+      case "dogs":
+        for (let i = 0; i < (e.n || 4); i++) {
+          const dx = px - ((e.n || 4) - 1) * 6 + i * 12;
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.ellipse(dx, py, 4, 2.5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(dx - 3, py - 2, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        break;
+      case "posSign":
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(px - 4, py - 4);
+        ctx.lineTo(px + 4, py + 4);
+        ctx.moveTo(px + 4, py - 4);
+        ctx.lineTo(px - 4, py + 4);
+        ctx.stroke();
+        break;
+      case "label":
+        ctx.fillStyle = color + "cc";
+        ctx.font = "8px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(e.text, px, py + 3);
+        break;
+    }
+  });
+  ctx.restore();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIN APP
+═══════════════════════════════════════════════════════════ */
+function App() {
+  const [lang, setLang] = useState("es");
+  const [tab, setTab] = useState("config");
+  const [ringW, setRingW] = useState(25);
+  const [ringH, setRingH] = useState(40);
+  const [entrySide, setEntrySide] = useState("bottom");
+  const [entryPos, setEntryPos] = useState(50);
+  const [cls, setCls] = useState("1");
+  const [configured, setConfigured] = useState(false);
+  const [compass, setCompass] = useState("N"); // N/S/E/W
+
+  const t = T[lang];
+  const exercises = EXERCISES[cls] || EXERCISES["1"];
+  const clsNames = {
+    "Debut": lang === "no" ? "Debutant" : "Debut",
+    "1": lang === "no" ? "Kl. 1" : lang === "en" ? "Class 1" : "Clase 1",
+    "2": lang === "no" ? "Kl. 2" : lang === "en" ? "Class 2" : "Clase 2",
+    "3": lang === "no" ? "Kl. 3" : lang === "en" ? "Class 3" : "Clase 3"
+  };
+  const tabs = [{
+    id: "config",
+    l: t.tabs.config
+  }, {
+    id: "course",
+    l: t.tabs.course
+  }, {
+    id: "heel",
+    l: t.tabs.heel
+  }, {
+    id: "steward",
+    l: t.tabs.steward
+  }, {
+    id: "score",
+    l: t.tabs.score
+  }];
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontFamily: "'DM Sans',-apple-system,sans-serif",
+      background: "#fafaf8",
+      minHeight: "100vh",
+      color: "#1a1a18"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "10px 16px",
+      borderBottom: "1px solid #d4d3cd",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexWrap: "wrap",
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 18,
+      fontWeight: 700
+    }
+  }, "\uD83D\uDC3E ", t.appTitle), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#9c9a92"
+    }
+  }, t.appSub, configured && /*#__PURE__*/React.createElement("span", {
+    style: {
+      marginLeft: 6,
+      color: "#2e7d32"
+    }
+  }, "\u2022 ", ringW, "\xD7", ringH, "m"))), /*#__PURE__*/React.createElement("select", {
+    value: lang,
+    onChange: e => setLang(e.target.value),
+    style: {
+      fontSize: 11,
+      padding: "3px 6px",
+      border: "1px solid #d4d3cd",
+      borderRadius: 6,
+      fontFamily: "inherit"
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "es"
+  }, "\uD83C\uDDEA\uD83C\uDDF8 ES"), /*#__PURE__*/React.createElement("option", {
+    value: "en"
+  }, "\uD83C\uDDEC\uD83C\uDDE7 EN"), /*#__PURE__*/React.createElement("option", {
+    value: "no"
+  }, "\uD83C\uDDF3\uD83C\uDDF4 NO"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      borderBottom: "2px solid #e8e7e3",
+      overflowX: "auto",
+      background: "#f2f1ed"
+    }
+  }, tabs.map(tb => /*#__PURE__*/React.createElement("button", {
+    key: tb.id,
+    onClick: () => setTab(tb.id),
+    style: {
+      flex: "0 0 auto",
+      padding: "9px 12px",
+      border: "none",
+      cursor: "pointer",
+      fontFamily: "inherit",
+      fontSize: 11,
+      fontWeight: tab === tb.id ? 700 : 500,
+      color: tab === tb.id ? "#1d5c2e" : "#6b6a65",
+      borderBottom: tab === tb.id ? "3px solid #1d5c2e" : "3px solid transparent",
+      marginBottom: -2,
+      background: "none",
+      whiteSpace: "nowrap"
+    }
+  }, tb.l))), tab !== "config" && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "6px 16px",
+      background: "#f8fdf9",
+      borderBottom: "1px solid #c8e6c9",
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 11,
+      fontWeight: 600,
+      color: "#2e7d32"
+    }
+  }, t.cls.label, ":"), Object.entries(clsNames).map(([v, l]) => /*#__PURE__*/React.createElement("button", {
+    key: v,
+    onClick: () => setCls(v),
+    style: {
+      padding: "4px 12px",
+      borderRadius: 16,
+      fontSize: 10,
+      fontWeight: cls === v ? 700 : 500,
+      cursor: "pointer",
+      fontFamily: "inherit",
+      border: cls === v ? "2px solid #1d5c2e" : "1px solid #c8e6c9",
+      background: cls === v ? "#1d5c2e" : "#fff",
+      color: cls === v ? "#fff" : "#2e7d32"
+    }
+  }, l))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      maxWidth: 900,
+      margin: "0 auto"
+    }
+  }, tab === "config" && /*#__PURE__*/React.createElement(ConfigScreen, {
+    t: t,
+    ringW: ringW,
+    setRingW: setRingW,
+    ringH: ringH,
+    setRingH: setRingH,
+    entrySide: entrySide,
+    setEntrySide: setEntrySide,
+    entryPos: entryPos,
+    setEntryPos: setEntryPos,
+    configured: configured,
+    setConfigured: setConfigured,
+    setTab: setTab,
+    compass: compass,
+    setCompass: setCompass
+  }), tab === "course" && (configured ? /*#__PURE__*/React.createElement(CourseScreen, {
+    t: t,
+    lang: lang,
+    ringW: ringW,
+    ringH: ringH,
+    entrySide: entrySide,
+    entryPos: entryPos,
+    cls: cls,
+    exercises: exercises,
+    compass: compass
+  }) : /*#__PURE__*/React.createElement(NoRing, {
+    t: t,
+    setTab: setTab
+  })), tab === "heel" && (configured ? /*#__PURE__*/React.createElement(HeelScreen, {
+    t: t,
+    lang: lang,
+    ringW: ringW,
+    ringH: ringH,
+    cls: cls,
+    entrySide: entrySide,
+    entryPos: entryPos,
+    compass: compass
+  }) : /*#__PURE__*/React.createElement(NoRing, {
+    t: t,
+    setTab: setTab
+  })), tab === "steward" && /*#__PURE__*/React.createElement(StewardScreen, {
+    t: t,
+    lang: lang,
+    cls: cls,
+    exercises: exercises
+  }), tab === "score" && /*#__PURE__*/React.createElement(ScoreScreen, {
+    t: t,
+    lang: lang,
+    cls: cls,
+    exercises: exercises
+  })));
+}
+function NoRing({
+  t,
+  setTab
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 50,
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: "#9c9a92",
+      marginBottom: 10
+    }
+  }, t.course.noConfig), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("config"),
+    style: {
+      padding: "8px 20px",
+      borderRadius: 8,
+      border: "none",
+      background: "#1d5c2e",
+      color: "#fff",
+      fontFamily: "inherit",
+      fontSize: 12,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, "\u2699 ", t.tabs.config));
+}
+
+/* ═══ Compass helper — draws N/S/E/W labels on canvas ═══ */
+function drawCompass(ctx, compass, cW, cH, pad) {
+  const dirs = {
+    N: {
+      t: "N",
+      b: "S",
+      l: "W",
+      r: "E"
+    },
+    S: {
+      t: "S",
+      b: "N",
+      l: "E",
+      r: "W"
+    },
+    E: {
+      t: "E",
+      b: "W",
+      l: "N",
+      r: "S"
+    },
+    W: {
+      t: "W",
+      b: "E",
+      l: "S",
+      r: "N"
+    }
+  };
+  const d = dirs[compass] || dirs.N;
+  ctx.fillStyle = "#2e7d3288";
+  ctx.font = "bold 11px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(d.t, cW / 2, pad - 1);
+  ctx.fillText(d.b, cW / 2, cH - pad + 12);
+  ctx.save();
+  ctx.translate(pad - 3, cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText(d.l, 0, 0);
+  ctx.restore();
+  ctx.save();
+  ctx.translate(cW - pad + 3, cH / 2);
+  ctx.rotate(Math.PI / 2);
+  ctx.fillText(d.r, 0, 0);
+  ctx.restore();
+  // Small compass rose top-right
+  ctx.fillStyle = "#2e7d32";
+  ctx.font = "bold 9px sans-serif";
+  ctx.textAlign = "center";
+  const cx = cW - pad - 15,
+    cy = pad + 15;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+  ctx.strokeStyle = "#2e7d3244";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillText(d.t, cx, cy - 3);
+}
+
+/* ═══ Entry helper — draws entry marker on canvas ═══ */
+function drawEntry(ctx, entrySide, entryPos, cW, cH, pad) {
+  let ex, ey;
+  if (entrySide === "bottom") {
+    ex = pad + (cW - 2 * pad) * entryPos / 100;
+    ey = cH - pad;
+  } else if (entrySide === "top") {
+    ex = pad + (cW - 2 * pad) * entryPos / 100;
+    ey = pad;
+  } else if (entrySide === "left") {
+    ex = pad;
+    ey = pad + (cH - 2 * pad) * entryPos / 100;
+  } else {
+    ex = cW - pad;
+    ey = pad + (cH - 2 * pad) * entryPos / 100;
+  }
+  ctx.fillStyle = "#ffc107";
+  ctx.beginPath();
+  ctx.arc(ex, ey, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#f57f17";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillStyle = "#333";
+  ctx.font = "bold 7px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("▶", ex, ey + 2.5);
+}
+
+/* ═══ CONFIG SCREEN ═══ */
+function ConfigScreen({
+  t,
+  ringW,
+  setRingW,
+  ringH,
+  setRingH,
+  entrySide,
+  setEntrySide,
+  entryPos,
+  setEntryPos,
+  configured,
+  setConfigured,
+  setTab,
+  compass,
+  setCompass
+}) {
+  const sides = [{
+    v: "left",
+    l: t.config.entryLeft
+  }, {
+    v: "right",
+    l: t.config.entryRight
+  }, {
+    v: "top",
+    l: t.config.entryTop
+  }, {
+    v: "bottom",
+    l: t.config.entryBottom
+  }];
+  const inp = {
+    width: "100%",
+    padding: "7px 10px",
+    border: "1px solid #d4d3cd",
+    borderRadius: 8,
+    fontFamily: "inherit",
+    fontSize: 13
+  };
+  const lbl = {
+    fontSize: 11,
+    fontWeight: 600,
+    color: "#6b6a65",
+    marginBottom: 4,
+    display: "block"
+  };
+  const btn = a => ({
+    padding: "6px 14px",
+    borderRadius: 8,
+    border: a ? "2px solid #1d5c2e" : "1px solid #d4d3cd",
+    background: a ? "#e8f5ec" : "#fff",
+    fontFamily: "inherit",
+    fontSize: 11,
+    fontWeight: a ? 700 : 500,
+    color: a ? "#1d5c2e" : "#6b6a65",
+    cursor: "pointer"
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 16
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: 17,
+      fontWeight: 700,
+      marginBottom: 14
+    }
+  }, t.config.title), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: 10,
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, t.config.width), /*#__PURE__*/React.createElement("input", {
+    type: "number",
+    value: ringW,
+    onChange: e => setRingW(+e.target.value),
+    min: 15,
+    max: 40,
+    style: inp
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, t.config.height), /*#__PURE__*/React.createElement("input", {
+    type: "number",
+    value: ringH,
+    onChange: e => setRingH(+e.target.value),
+    min: 20,
+    max: 50,
+    style: inp
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, t.config.entry, " \u2014 ", t.config.side), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 4,
+      flexWrap: "wrap"
+    }
+  }, sides.map(s => /*#__PURE__*/React.createElement("button", {
+    key: s.v,
+    onClick: () => setEntrySide(s.v),
+    style: btn(entrySide === s.v)
+  }, s.l)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, t.config.pos, " ", entryPos, "%"), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: 10,
+    max: 90,
+    value: entryPos,
+    onChange: e => setEntryPos(+e.target.value),
+    style: {
+      width: "100%"
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: lbl
+  }, t.config.compass), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 4,
+      flexWrap: "wrap"
+    }
+  }, [{
+    v: "N",
+    l: t.config.compassN
+  }, {
+    v: "S",
+    l: t.config.compassS
+  }, {
+    v: "E",
+    l: t.config.compassE
+  }, {
+    v: "W",
+    l: t.config.compassW
+  }].map(c => /*#__PURE__*/React.createElement("button", {
+    key: c.v,
+    onClick: () => setCompass(c.v),
+    style: btn(compass === c.v)
+  }, c.l)))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#e8f5ec",
+      borderRadius: 10,
+      padding: 14,
+      marginBottom: 14,
+      textAlign: "center"
+    }
+  }, /*#__PURE__*/React.createElement(MiniRing, {
+    w: ringW,
+    h: ringH,
+    side: entrySide,
+    pos: entryPos
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#1d5c2e",
+      marginTop: 6
+    }
+  }, ringW, "m \xD7 ", ringH, "m")), !configured ? /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setConfigured(true);
+      setTab("course");
+    },
+    style: {
+      width: "100%",
+      padding: 11,
+      borderRadius: 8,
+      border: "none",
+      background: "#1d5c2e",
+      color: "#fff",
+      fontFamily: "inherit",
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, "\u2713 ", t.config.start) : /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 6
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setConfigured(false),
+    style: {
+      flex: 1,
+      padding: 9,
+      borderRadius: 8,
+      border: "1px solid #d4d3cd",
+      background: "#fff",
+      fontFamily: "inherit",
+      fontSize: 12,
+      cursor: "pointer"
+    }
+  }, t.config.edit), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setTab("course"),
+    style: {
+      flex: 1,
+      padding: 9,
+      borderRadius: 8,
+      border: "none",
+      background: "#1d5c2e",
+      color: "#fff",
+      fontFamily: "inherit",
+      fontSize: 12,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, t.config.done)));
+}
+function MiniRing({
+  w,
+  h,
+  side,
+  pos
+}) {
+  const cw = 160,
+    ch = Math.round(160 * h / w),
+    sc = Math.min(cw / w, ch / h),
+    rw = w * sc,
+    rh = h * sc,
+    ox = (cw - rw) / 2,
+    oy = 4;
+  let ex, ey;
+  if (side === "bottom") {
+    ex = ox + rw * pos / 100;
+    ey = oy + rh;
+  } else if (side === "top") {
+    ex = ox + rw * pos / 100;
+    ey = oy;
+  } else if (side === "left") {
+    ex = ox;
+    ey = oy + rh * pos / 100;
+  } else {
+    ex = ox + rw;
+    ey = oy + rh * pos / 100;
+  }
+  return /*#__PURE__*/React.createElement("svg", {
+    width: cw,
+    height: rh + 10,
+    viewBox: `0 0 ${cw} ${rh + 10}`
+  }, /*#__PURE__*/React.createElement("rect", {
+    x: ox,
+    y: oy,
+    width: rw,
+    height: rh,
+    fill: "#a5d6a7",
+    stroke: "#2e7d32",
+    strokeWidth: 2,
+    rx: 3
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: ex,
+    cy: ey,
+    r: 4,
+    fill: "#ffc107",
+    stroke: "#f57f17",
+    strokeWidth: 1.5
+  }));
+}
+
+/* ═══ COURSE SCREEN — scale-accurate diagrams, drag as unit ═══ */
+function CourseScreen({
+  t,
+  lang,
+  ringW,
+  ringH,
+  entrySide,
+  entryPos,
+  cls,
+  exercises,
+  compass
+}) {
+  const ref = useRef(null);
+  const [placed, setPlaced] = useState([]);
+  const [sel, setSel] = useState(null);
+  const [drag, setDrag] = useState(null);
+  const [off, setOff] = useState({
+    x: 0,
+    y: 0
+  });
+  const cex = exercises.filter(e => !e.isHeelwork && !e.noCanvas);
+  const cW = 620,
+    cH = Math.round(620 * ringH / ringW),
+    pad = 30;
+  const mScale = (cW - 2 * pad) / ringW; // pixels per meter
+
+  const getEntry = useCallback(() => {
+    if (entrySide === "bottom") return {
+      x: pad + (cW - 2 * pad) * entryPos / 100,
+      y: cH - pad
+    };
+    if (entrySide === "top") return {
+      x: pad + (cW - 2 * pad) * entryPos / 100,
+      y: pad
+    };
+    if (entrySide === "left") return {
+      x: pad,
+      y: pad + (cH - 2 * pad) * entryPos / 100
+    };
+    return {
+      x: cW - pad,
+      y: pad + (cH - 2 * pad) * entryPos / 100
+    };
+  }, [cW, cH, entrySide, entryPos]);
+  const draw = useCallback(ctx => {
+    ctx.clearRect(0, 0, cW, cH);
+    ctx.fillStyle = "#c8e6c9";
+    ctx.fillRect(pad, pad, cW - 2 * pad, cH - 2 * pad);
+    ctx.strokeStyle = "#2e7d32";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(pad, pad, cW - 2 * pad, cH - 2 * pad);
+    // grid
+    ctx.strokeStyle = "#a5d6a722";
+    ctx.lineWidth = .5;
+    for (let x = 5; x < ringW; x += 5) {
+      ctx.beginPath();
+      ctx.moveTo(pad + x * mScale, pad);
+      ctx.lineTo(pad + x * mScale, cH - pad);
+      ctx.stroke();
+    }
+    for (let y = 5; y < ringH; y += 5) {
+      ctx.beginPath();
+      ctx.moveTo(pad, pad + y * mScale);
+      ctx.lineTo(cW - pad, pad + y * mScale);
+      ctx.stroke();
+    }
+    // dims
+    ctx.fillStyle = "#2e7d32";
+    ctx.font = "bold 9px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`${ringW}m`, cW / 2, pad - 5);
+    ctx.save();
+    ctx.translate(pad - 8, cH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText(`${ringH}m`, 0, 0);
+    ctx.restore();
+    // entry + compass
+    drawEntry(ctx, entrySide, entryPos, cW, cH, pad);
+    drawCompass(ctx, compass, cW, cH, pad);
+    // placed exercises
+    placed.forEach((p, i) => {
+      drawLayout(ctx, p.layout, p.x, p.y, p.rot, mScale, p.color, i === sel);
+      // Number badge
+      ctx.fillStyle = "#fff";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 12, 9, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = p.color;
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 12, 9, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.font = "bold 8px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(p.num, p.x, p.y - 9);
+    });
+  }, [placed, sel, cW, cH, ringW, ringH, mScale, getEntry]);
+  useEffect(() => {
+    const c = ref.current;
+    if (!c) return;
+    c.width = cW;
+    c.height = cH;
+    draw(c.getContext("2d"));
+  }, [draw, cW, cH]);
+  const toC = e => {
+    const r = ref.current.getBoundingClientRect();
+    return {
+      x: (e.clientX - r.left) * cW / r.width,
+      y: (e.clientY - r.top) * cH / r.height
+    };
+  };
+  const findAt = (cx, cy) => placed.findIndex(p => Math.hypot(p.x - cx, p.y - cy) < 20);
+  const onDown = e => {
+    const {
+      x,
+      y
+    } = toC(e);
+    const i = findAt(x, y);
+    if (i >= 0) {
+      setDrag(i);
+      setOff({
+        x: placed[i].x - x,
+        y: placed[i].y - y
+      });
+      setSel(i);
+    } else setSel(null);
+  };
+  const onMove = e => {
+    if (drag == null) return;
+    const {
+      x,
+      y
+    } = toC(e);
+    setPlaced(p => p.map((it, i) => i === drag ? {
+      ...it,
+      x: x + off.x,
+      y: y + off.y
+    } : it));
+  };
+  const onUp = () => setDrag(null);
+  const add = ex => {
+    const cx = cW / 2 + (Math.random() - .5) * 100,
+      cy = cH / 2 + (Math.random() - .5) * 80;
+    setPlaced(p => [...p, {
+      ...ex,
+      nameL: ex.name[lang],
+      x: cx,
+      y: cy,
+      rot: 0
+    }]);
+  };
+  // Calculate bounding box of an exercise layout in pixels
+  const layoutBounds = layout => {
+    let minX = 0,
+      maxX = 0,
+      minY = 0,
+      maxY = 0;
+    (layout || []).forEach(e => {
+      const coords = [];
+      if (e.dx !== undefined) coords.push({
+        x: e.dx,
+        y: e.dy || 0
+      });
+      if (e.x1 !== undefined) coords.push({
+        x: e.x1,
+        y: e.y1 || 0
+      }, {
+        x: e.x2 || 0,
+        y: e.y2 || 0
+      });
+      if (e.r) coords.push({
+        x: (e.dx || 0) - (e.r || 0),
+        y: (e.dy || 0) - (e.r || 0)
+      }, {
+        x: (e.dx || 0) + (e.r || 0),
+        y: (e.dy || 0) + (e.r || 0)
+      });
+      if (e.size) {
+        const s = e.size / 2;
+        coords.push({
+          x: (e.dx || 0) - s,
+          y: (e.dy || 0) - s
+        }, {
+          x: (e.dx || 0) + s,
+          y: (e.dy || 0) + s
+        });
+      }
+      coords.forEach(c => {
+        minX = Math.min(minX, c.x * mScale);
+        maxX = Math.max(maxX, c.x * mScale);
+        minY = Math.min(minY, c.y * mScale);
+        maxY = Math.max(maxY, c.y * mScale);
+      });
+    });
+    return {
+      minX,
+      maxX,
+      minY,
+      maxY
+    };
+  };
+  const suggest = () => {
+    const cols = Math.ceil(Math.sqrt(cex.length));
+    const rows = Math.ceil(cex.length / cols);
+    // Ring inner area
+    const rL = pad + 10,
+      rR = cW - pad - 10,
+      rT = pad + 10,
+      rB = cH - pad - 10;
+    // Calculate safe placement for each exercise
+    const positions = cex.map((e, i) => {
+      const b = layoutBounds(e.layout);
+      const col = i % cols,
+        row = Math.floor(i / cols);
+      // Ideal grid position
+      const idealX = cols > 1 ? rL + (rR - rL) * col / (cols - 1) : (rL + rR) / 2;
+      const idealY = rows > 1 ? rT + (rB - rT) * row / (rows - 1) : (rT + rB) / 2;
+      // Clamp so layout stays inside ring
+      const cx = Math.max(rL - b.minX, Math.min(rR - b.maxX, idealX));
+      const cy = Math.max(rT - b.minY, Math.min(rB - b.maxY, idealY));
+      return {
+        ...e,
+        nameL: e.name[lang],
+        x: cx,
+        y: cy,
+        rot: 0
+      };
+    });
+    setPlaced(positions);
+    setSel(null);
+  };
+  const exp = () => {
+    const c = ref.current;
+    if (!c) return;
+    var l = document.createElement("a");
+    l.download = "pista_" + cls + ".png";
+    l.href = c.toDataURL("image/png");
+    document.body.appendChild(l);
+    l.click();
+    document.body.removeChild(l);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 0,
+      minHeight: 480
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 150,
+      borderRight: "1px solid #e8e7e3",
+      overflowY: "auto",
+      background: "#f8f8f6",
+      flexShrink: 0,
+      display: "flex",
+      flexDirection: "column"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "6px 6px 2px",
+      fontSize: 10,
+      fontWeight: 700,
+      color: "#1d5c2e"
+    }
+  }, t.cls.label, " ", cls), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      overflowY: "auto"
+    }
+  }, cex.map(e => /*#__PURE__*/React.createElement("button", {
+    key: e.id,
+    onClick: () => add(e),
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 4,
+      width: "100%",
+      padding: "5px 6px",
+      border: "none",
+      background: "none",
+      cursor: "pointer",
+      fontFamily: "inherit",
+      fontSize: 9,
+      textAlign: "left",
+      borderLeft: `3px solid ${e.color}`
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 700,
+      color: e.color,
+      minWidth: 24
+    }
+  }, e.num), /*#__PURE__*/React.createElement("span", {
+    style: {
+      lineHeight: 1.2
+    }
+  }, e.name[lang])))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 4,
+      borderTop: "1px solid #e8e7e3",
+      display: "flex",
+      flexDirection: "column",
+      gap: 3
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: suggest,
+    style: {
+      padding: 5,
+      borderRadius: 5,
+      border: "none",
+      background: "#f59e0b",
+      color: "#fff",
+      fontSize: 9,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, t.course.suggest), /*#__PURE__*/React.createElement("button", {
+    onClick: exp,
+    style: {
+      padding: 5,
+      borderRadius: 5,
+      border: "1px solid #d4d3cd",
+      background: "#fff",
+      fontSize: 9,
+      cursor: "pointer"
+    }
+  }, t.course.exportImg), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setPlaced([]);
+      setSel(null);
+    },
+    style: {
+      padding: 5,
+      borderRadius: 5,
+      border: "1px solid #fca5a5",
+      background: "#fff",
+      color: "#ef4444",
+      fontSize: 9,
+      cursor: "pointer"
+    }
+  }, t.course.clear))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      position: "relative",
+      overflow: "auto",
+      padding: 6
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      color: "#9c9a92",
+      marginBottom: 3
+    }
+  }, t.course.dragHint), /*#__PURE__*/React.createElement("canvas", {
+    ref: ref,
+    onMouseDown: onDown,
+    onMouseMove: onMove,
+    onMouseUp: onUp,
+    onMouseLeave: onUp,
+    style: {
+      width: "100%",
+      maxWidth: cW,
+      cursor: drag != null ? "grabbing" : "crosshair",
+      border: "1px solid #e8e7e3",
+      borderRadius: 6
+    }
+  }), sel != null && placed[sel] && /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: "absolute",
+      top: 24,
+      right: 6,
+      background: "#fff",
+      borderRadius: 8,
+      boxShadow: "0 2px 10px rgba(0,0,0,.1)",
+      border: "1px solid #e8e7e3",
+      padding: 10,
+      maxWidth: 200,
+      fontSize: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 700,
+      color: placed[sel].color
+    }
+  }, placed[sel].num, " ", placed[sel].nameL), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSel(null),
+    style: {
+      border: "none",
+      background: "none",
+      cursor: "pointer",
+      color: "#999",
+      fontSize: 12
+    }
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 3,
+      flexWrap: "wrap"
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setPlaced(p => p.map((it, i) => i === sel ? {
+      ...it,
+      rot: ((it.rot || 0) + 45) % 360
+    } : it)),
+    style: {
+      padding: "3px 8px",
+      borderRadius: 5,
+      border: "1px solid #d4d3cd",
+      background: "#f8f8f6",
+      fontSize: 10,
+      cursor: "pointer"
+    }
+  }, t.course.rotate), /*#__PURE__*/React.createElement("button", {
+    onClick: () => {
+      setPlaced(p => p.filter((_, i) => i !== sel));
+      setSel(null);
+    },
+    style: {
+      padding: "3px 8px",
+      borderRadius: 5,
+      border: "1px solid #fca5a5",
+      background: "#fff",
+      color: "#ef4444",
+      fontSize: 10,
+      cursor: "pointer"
+    }
+  }, t.course.delete)))));
+}
+
+/* ═══ HEELWORK SCREEN — with command points, continuous path, labels ═══ */
+function HeelScreen({
+  t,
+  lang,
+  ringW,
+  ringH,
+  cls,
+  entrySide,
+  entryPos,
+  compass
+}) {
+  const ref = useRef(null);
+  const [segs, setSegs] = useState([]);
+  const [pace, setPace] = useState("normal");
+  const [legend, setLeg] = useState(false);
+  const [speaking, setSpk] = useState(false);
+  const P = useMemo(() => [{
+    id: "normal",
+    l: t.heel.normal,
+    c: "#1565c0",
+    d: [],
+    w: 3,
+    sym: "—"
+  }, {
+    id: "fast",
+    l: t.heel.fast,
+    c: "#2e7d32",
+    d: [10, 5],
+    w: 4,
+    sym: "- -"
+  }, {
+    id: "slow",
+    l: t.heel.slow,
+    c: "#e65100",
+    d: [8, 4],
+    w: 3,
+    sym: "··"
+  }, {
+    id: "backward",
+    l: t.heel.backward,
+    c: "#7b1fa2",
+    d: [4, 4],
+    w: 3,
+    sym: "◄"
+  }, {
+    id: "halt",
+    l: t.heel.halt,
+    c: "#c62828",
+    d: [],
+    w: 0,
+    sym: "●"
+  }, {
+    id: "rightTurn",
+    l: t.heel.rightTurn,
+    c: "#0277bd",
+    d: [],
+    w: 0,
+    sym: "↱"
+  }, {
+    id: "leftTurn",
+    l: t.heel.leftTurn,
+    c: "#00838f",
+    d: [],
+    w: 0,
+    sym: "↰"
+  }, {
+    id: "aboutTurn",
+    l: t.heel.aboutTurn,
+    c: "#ff8f00",
+    d: [],
+    w: 0,
+    sym: "↺"
+  }, {
+    id: "command",
+    l: t.heel.command,
+    c: "#d32f2f",
+    d: [],
+    w: 0,
+    sym: "★"
+  }, {
+    id: "recall",
+    l: t.heel.recall,
+    c: "#e91e63",
+    d: [],
+    w: 0,
+    sym: "📣"
+  }], [t]);
+  const cW = 540,
+    cH = Math.round(540 * ringH / ringW);
+
+  // Find the last segment with a line (w>0) to draw connecting lines
+  const lastLineIdx = i => {
+    for (let j = i - 1; j >= 0; j--) {
+      const pc = P.find(x => x.id === segs[j].pace);
+      if (!pc || pc.w > 0) return j;
+    }
+    return -1;
+  };
+  const drawAll = useCallback(ctx => {
+    ctx.clearRect(0, 0, cW, cH);
+    const p = 25;
+    ctx.fillStyle = "#c8e6c9";
+    ctx.fillRect(p, p, cW - 2 * p, cH - 2 * p);
+    ctx.strokeStyle = "#2e7d32";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(p, p, cW - 2 * p, cH - 2 * p);
+    // Entry marker + compass
+    drawEntry(ctx, entrySide, entryPos, cW, cH, p);
+    drawCompass(ctx, compass, cW, cH, p);
+    // Draw path lines first (below markers)
+    for (let i = 1; i < segs.length; i++) {
+      const s = segs[i],
+        pc = P.find(x => x.id === s.pace) || P[0];
+      if (pc.w > 0) {
+        // Find previous point (could be a marker at same spot or a real point)
+        const pi = lastLineIdx(i);
+        const prev = pi >= 0 ? segs[pi] : segs[i - 1];
+        ctx.strokeStyle = pc.c;
+        ctx.lineWidth = pc.w;
+        ctx.setLineDash(pc.d);
+        ctx.beginPath();
+        ctx.moveTo(prev.x, prev.y);
+        ctx.lineTo(s.x, s.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+    // Draw markers on top
+    for (let i = 0; i < segs.length; i++) {
+      const s = segs[i];
+      // Start label
+      if (i === 0) {
+        ctx.fillStyle = "#ffc107";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#f57f17";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.fillStyle = "#333";
+        ctx.font = "bold 7px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("▶", s.x, s.y + 2.5);
+        ctx.fillStyle = "#1d5c2e";
+        ctx.font = "bold 9px sans-serif";
+        ctx.fillText(t.heel.inicio, s.x, s.y - 12);
+      }
+      // End label
+      if (i === segs.length - 1 && segs.length > 1) {
+        ctx.strokeStyle = "#c62828";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(s.x - 5, s.y - 5, 10, 10);
+        ctx.fillStyle = "#c62828";
+        ctx.font = "bold 9px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(t.heel.fin, s.x, s.y + 16);
+      }
+      // Marker dots
+      if (s.pace === "halt") {
+        ctx.fillStyle = "#c62828";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 7px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("■", s.x, s.y + 2.5);
+      } else if (s.pace === "rightTurn") {
+        ctx.fillStyle = "#0277bd";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 6px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("R", s.x, s.y + 2);
+      } else if (s.pace === "leftTurn") {
+        ctx.fillStyle = "#00838f";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 6px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("L", s.x, s.y + 2);
+      } else if (s.pace === "aboutTurn") {
+        ctx.fillStyle = "#ff8f00";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 6px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("↺", s.x, s.y + 2);
+      } else if (s.pace === "command") {
+        ctx.fillStyle = "#d32f2f";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 7px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("C", s.x, s.y + 2.5);
+        ctx.fillStyle = "#d32f2f";
+        ctx.font = "bold 7px sans-serif";
+        ctx.fillText(t.heel.command, s.x, s.y - 10);
+      } else if (s.pace === "recall") {
+        ctx.fillStyle = "#e91e63";
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.font = "bold 7px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("⟵", s.x, s.y + 2.5);
+        ctx.fillStyle = "#e91e63";
+        ctx.font = "bold 7px sans-serif";
+        ctx.fillText(t.heel.recall, s.x, s.y - 10);
+      }
+    }
+  }, [segs, cW, cH, P, t]);
+  useEffect(() => {
+    const c = ref.current;
+    if (!c) return;
+    c.width = cW;
+    c.height = cH;
+    drawAll(c.getContext("2d"));
+  }, [drawAll, cW, cH]);
+  const onClick = e => {
+    const r = ref.current.getBoundingClientRect();
+    setSegs(p => [...p, {
+      x: (e.clientX - r.left) * cW / r.width,
+      y: (e.clientY - r.top) * cH / r.height,
+      pace
+    }]);
+  };
+
+  // Continuous auto-route based on class
+  const auto = () => {
+    const p = 30,
+      w = cW - 2 * p,
+      h = cH - 2 * p;
+    if (cls === "3") {
+      // Class 3: 2 paths - heelwork + positions with commands
+      setSegs([
+      // Path 1: Heelwork 3.3
+      {
+        x: p + w * .85,
+        y: p + h * .75,
+        pace: "normal"
+      }, {
+        x: p + w * .85,
+        y: p + h * .4,
+        pace: "normal"
+      }, {
+        x: p + w * .85,
+        y: p + h * .4,
+        pace: "rightTurn"
+      }, {
+        x: p + w * .55,
+        y: p + h * .4,
+        pace: "fast"
+      }, {
+        x: p + w * .55,
+        y: p + h * .15,
+        pace: "fast"
+      }, {
+        x: p + w * .55,
+        y: p + h * .15,
+        pace: "aboutTurn"
+      }, {
+        x: p + w * .55,
+        y: p + h * .35,
+        pace: "normal"
+      }, {
+        x: p + w * .55,
+        y: p + h * .35,
+        pace: "leftTurn"
+      }, {
+        x: p + w * .25,
+        y: p + h * .35,
+        pace: "slow"
+      }, {
+        x: p + w * .25,
+        y: p + h * .35,
+        pace: "halt"
+      }, {
+        x: p + w * .25,
+        y: p + h * .55,
+        pace: "backward"
+      }, {
+        x: p + w * .25,
+        y: p + h * .55,
+        pace: "halt"
+      }, {
+        x: p + w * .55,
+        y: p + h * .55,
+        pace: "normal"
+      }, {
+        x: p + w * .55,
+        y: p + h * .55,
+        pace: "rightTurn"
+      }, {
+        x: p + w * .55,
+        y: p + h * .7,
+        pace: "normal"
+      }, {
+        x: p + w * .55,
+        y: p + h * .7,
+        pace: "leftTurn"
+      }, {
+        x: p + w * .2,
+        y: p + h * .7,
+        pace: "normal"
+      }, {
+        x: p + w * .2,
+        y: p + h * .7,
+        pace: "halt"
+      },
+      // Path 2: Positions 3.4 (with commands)
+      {
+        x: p + w * .2,
+        y: p + h * .7,
+        pace: "normal"
+      }, {
+        x: p + w * .2,
+        y: p + h * .85,
+        pace: "normal"
+      }, {
+        x: p + w * .2,
+        y: p + h * .85,
+        pace: "command"
+      }, {
+        x: p + w * .35,
+        y: p + h * .85,
+        pace: "normal"
+      }, {
+        x: p + w * .35,
+        y: p + h * .85,
+        pace: "command"
+      }, {
+        x: p + w * .35,
+        y: p + h * .92,
+        pace: "normal"
+      }, {
+        x: p + w * .55,
+        y: p + h * .92,
+        pace: "normal"
+      }, {
+        x: p + w * .55,
+        y: p + h * .92,
+        pace: "recall"
+      }, {
+        x: p + w * .7,
+        y: p + h * .92,
+        pace: "normal"
+      }, {
+        x: p + w * .7,
+        y: p + h * .92,
+        pace: "halt"
+      }]);
+    } else {
+      setSegs([{
+        x: p + w * .8,
+        y: p + h * .8,
+        pace: "normal"
+      }, {
+        x: p + w * .8,
+        y: p + h * .4,
+        pace: "normal"
+      }, {
+        x: p + w * .8,
+        y: p + h * .4,
+        pace: "rightTurn"
+      }, {
+        x: p + w * .5,
+        y: p + h * .4,
+        pace: "fast"
+      }, {
+        x: p + w * .5,
+        y: p + h * .15,
+        pace: "fast"
+      }, {
+        x: p + w * .5,
+        y: p + h * .15,
+        pace: "aboutTurn"
+      }, {
+        x: p + w * .5,
+        y: p + h * .4,
+        pace: "normal"
+      }, {
+        x: p + w * .5,
+        y: p + h * .4,
+        pace: "leftTurn"
+      }, {
+        x: p + w * .2,
+        y: p + h * .4,
+        pace: "slow"
+      }, {
+        x: p + w * .2,
+        y: p + h * .4,
+        pace: "halt"
+      }, {
+        x: p + w * .2,
+        y: p + h * .55,
+        pace: "backward"
+      }, {
+        x: p + w * .2,
+        y: p + h * .55,
+        pace: "halt"
+      }, {
+        x: p + w * .2,
+        y: p + h * .55,
+        pace: "aboutTurn"
+      }, {
+        x: p + w * .2,
+        y: p + h * .4,
+        pace: "normal"
+      }, {
+        x: p + w * .2,
+        y: p + h * .4,
+        pace: "rightTurn"
+      }, {
+        x: p + w * .5,
+        y: p + h * .4,
+        pace: "normal"
+      }, {
+        x: p + w * .5,
+        y: p + h * .6,
+        pace: "normal"
+      }, {
+        x: p + w * .5,
+        y: p + h * .6,
+        pace: "halt"
+      }]);
+    }
+  };
+  const exp = () => {
+    const c = ref.current;
+    if (!c) return;
+    // Create larger canvas with legend at bottom
+    const legendH = 40;
+    const out = document.createElement("canvas");
+    out.width = cW;
+    out.height = cH + legendH;
+    const ox = out.getContext("2d");
+    // Draw ring
+    ox.drawImage(c, 0, 0);
+    // Draw legend bar
+    ox.fillStyle = "#f8f8f6";
+    ox.fillRect(0, cH, cW, legendH);
+    ox.strokeStyle = "#e8e7e3";
+    ox.lineWidth = 1;
+    ox.beginPath();
+    ox.moveTo(0, cH);
+    ox.lineTo(cW, cH);
+    ox.stroke();
+    let lx = 10;
+    P.forEach(p => {
+      ox.fillStyle = p.c;
+      if (p.w > 0) {
+        ox.fillRect(lx, cH + 14, 16, p.w);
+        lx += 20;
+      } else {
+        ox.beginPath();
+        ox.arc(lx + 6, cH + 16, 5, 0, Math.PI * 2);
+        ox.fill();
+        lx += 16;
+      }
+      ox.fillStyle = "#333";
+      ox.font = "9px sans-serif";
+      ox.textAlign = "left";
+      ox.fillText(p.l, lx, cH + 19);
+      lx += ox.measureText(p.l).width + 12;
+    });
+    var l = document.createElement("a");
+    l.download = "heelwork_" + cls + ".png";
+    l.href = out.toDataURL("image/png");
+    document.body.appendChild(l);
+    l.click();
+    document.body.removeChild(l);
+  };
+
+  // Narration — slower rate, pauses between segments
+  const narrate = () => {
+    if (!window.speechSynthesis || segs.length === 0) return;
+    window.speechSynthesis.cancel();
+    const names = {};
+    P.forEach(p => names[p.id] = p.l);
+    const ph = [t.heel.inicio];
+    segs.forEach((s, i) => {
+      if (i > 0) ph.push(names[s.pace] || s.pace);
+    });
+    ph.push(t.heel.fin);
+    const u = new SpeechSynthesisUtterance(ph.join("... "));
+    u.lang = lang === "es" ? "es-ES" : lang === "no" ? "nb-NO" : "en-US";
+    u.rate = 0.55;
+    u.onend = () => setSpk(false);
+    u.onerror = () => setSpk(false);
+    setSpk(true);
+    window.speechSynthesis.speak(u);
+  };
+  const stop = () => {
+    window.speechSynthesis.cancel();
+    setSpk(false);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 10
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: 15,
+      fontWeight: 700,
+      marginBottom: 8
+    }
+  }, t.heel.title), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 3,
+      flexWrap: "wrap",
+      marginBottom: 8
+    }
+  }, P.map(p => /*#__PURE__*/React.createElement("button", {
+    key: p.id,
+    onClick: () => setPace(p.id),
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      fontSize: 9,
+      fontWeight: 600,
+      cursor: "pointer",
+      fontFamily: "inherit",
+      border: pace === p.id ? `2px solid ${p.c}` : "1px solid #d4d3cd",
+      background: pace === p.id ? `${p.c}18` : "#fff",
+      color: p.c
+    }
+  }, p.sym, " ", p.l))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 3,
+      flexWrap: "wrap",
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSegs(p => p.slice(0, -1)),
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      border: "1px solid #d4d3cd",
+      background: "#fff",
+      fontSize: 9,
+      cursor: "pointer"
+    }
+  }, t.heel.undo), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSegs([]),
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      border: "1px solid #fca5a5",
+      background: "#fff",
+      color: "#ef4444",
+      fontSize: 9,
+      cursor: "pointer"
+    }
+  }, t.heel.clearPath), /*#__PURE__*/React.createElement("button", {
+    onClick: auto,
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      border: "none",
+      background: "#f59e0b",
+      color: "#fff",
+      fontSize: 9,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, t.heel.autoRoute), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setLeg(!legend),
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      border: "1px solid #d4d3cd",
+      background: legend ? "#e8f5ec" : "#fff",
+      fontSize: 9,
+      cursor: "pointer"
+    }
+  }, t.heel.legend), /*#__PURE__*/React.createElement("button", {
+    onClick: exp,
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      border: "1px solid #d4d3cd",
+      background: "#fff",
+      fontSize: 9,
+      cursor: "pointer"
+    }
+  }, t.heel.exportImg), !speaking ? /*#__PURE__*/React.createElement("button", {
+    onClick: narrate,
+    disabled: segs.length === 0,
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      border: "none",
+      background: segs.length > 0 ? "#1d5c2e" : "#ccc",
+      color: "#fff",
+      fontSize: 9,
+      fontWeight: 700,
+      cursor: segs.length > 0 ? "pointer" : "default"
+    }
+  }, t.heel.playAudio) : /*#__PURE__*/React.createElement("button", {
+    onClick: stop,
+    style: {
+      padding: "4px 8px",
+      borderRadius: 5,
+      border: "none",
+      background: "#c62828",
+      color: "#fff",
+      fontSize: 9,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, t.heel.stopAudio)), legend && /*#__PURE__*/React.createElement("div", {
+    style: {
+      background: "#f8f8f6",
+      borderRadius: 6,
+      padding: 8,
+      marginBottom: 8,
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 6
+    }
+  }, P.map(p => /*#__PURE__*/React.createElement("div", {
+    key: p.id,
+    style: {
+      display: "flex",
+      alignItems: "center",
+      gap: 3,
+      fontSize: 9
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 14,
+      height: p.w > 0 ? p.w : 8,
+      background: p.c,
+      borderRadius: p.w > 0 ? 1 : 4
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: p.c,
+      fontWeight: 600
+    }
+  }, p.l)))), /*#__PURE__*/React.createElement("canvas", {
+    ref: ref,
+    onClick: onClick,
+    style: {
+      width: "100%",
+      maxWidth: cW,
+      cursor: "crosshair",
+      border: "1px solid #e8e7e3",
+      borderRadius: 6
+    }
+  }));
+}
+
+/* ═══ STEWARD SCREEN ═══ */
+function StewardScreen({
+  t,
+  lang,
+  cls,
+  exercises
+}) {
+  const [sTab, setSTab] = useState("script");
+  const [open, setOpen] = useState(null);
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 14
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: 15,
+      fontWeight: 700,
+      marginBottom: 8
+    }
+  }, t.steward.title), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 4,
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSTab("script"),
+    style: {
+      padding: "6px 14px",
+      borderRadius: 8,
+      border: sTab === "script" ? "2px solid #1d5c2e" : "1px solid #d4d3cd",
+      background: sTab === "script" ? "#e8f5ec" : "#fff",
+      fontFamily: "inherit",
+      fontSize: 11,
+      fontWeight: sTab === "script" ? 700 : 500,
+      color: sTab === "script" ? "#1d5c2e" : "#6b6a65",
+      cursor: "pointer"
+    }
+  }, t.steward.tabScript), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setSTab("ref"),
+    style: {
+      padding: "6px 14px",
+      borderRadius: 8,
+      border: sTab === "ref" ? "2px solid #1d5c2e" : "1px solid #d4d3cd",
+      background: sTab === "ref" ? "#e8f5ec" : "#fff",
+      fontFamily: "inherit",
+      fontSize: 11,
+      fontWeight: sTab === "ref" ? 700 : 500,
+      color: sTab === "ref" ? "#1d5c2e" : "#6b6a65",
+      cursor: "pointer"
+    }
+  }, t.steward.tabRef)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 5
+    }
+  }, exercises.map((ex, i) => /*#__PURE__*/React.createElement("div", {
+    key: ex.id,
+    style: {
+      border: "1px solid #e8e7e3",
+      borderRadius: 8,
+      overflow: "hidden",
+      background: "#fff"
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setOpen(open === i ? null : i),
+    style: {
+      width: "100%",
+      padding: "9px 12px",
+      border: "none",
+      background: "none",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      gap: 6,
+      fontFamily: "inherit",
+      textAlign: "left"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 700,
+      color: ex.color,
+      fontSize: 12
+    }
+  }, ex.num), /*#__PURE__*/React.createElement("span", {
+    style: {
+      flex: 1,
+      fontSize: 11,
+      fontWeight: 600
+    }
+  }, ex.name[lang]), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 10,
+      color: "#9c9a92"
+    }
+  }, "\xD7", ex.coeff), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: "#9c9a92"
+    }
+  }, open === i ? "▲" : "▼")), open === i && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: "0 12px 10px",
+      borderTop: "1px solid #f2f1ed"
+    }
+  }, sTab === "script" ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 11,
+      color: "#333",
+      lineHeight: 1.7,
+      marginTop: 6,
+      padding: "8px 10px",
+      background: "#f8fdf9",
+      borderRadius: 6,
+      borderLeft: `3px solid ${ex.color}`,
+      whiteSpace: "pre-wrap"
+    }
+  }, ex.stewardScript[lang]) : /*#__PURE__*/React.createElement(StewardRef, {
+    ex: ex,
+    lang: lang
+  }))))));
+}
+function StewardRef({
+  ex,
+  lang
+}) {
+  const tl = (es, en, no) => lang === "es" ? es : lang === "en" ? en : no;
+  const layout = ex.layout || [];
+  const hasType = t => layout.filter(e => e.t === t).length > 0;
+  const dists = layout.filter(e => e.t === "line" && e.label).map(e => e.label).join(", ");
+  if (layout.length === 0) {
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 10,
+        color: "#9c9a92",
+        marginTop: 6
+      }
+    }, ex.isHeelwork ? tl("Conduccion: paso normal, rapido, lento, giros derecha/izquierda, media vuelta, alto, pasos atras, pasos laterales.", "Heelwork: normal, fast, slow pace, right/left turns, about-turn, halt, backward, side steps.", "Fot: normal, hurtig, langsom, svinger, helomvending, stopp, bakover.") : tl("Evaluacion general continua durante toda la prueba.", "Continuous general evaluation.", "Kontinuerlig vurdering."));
+  }
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 10,
+      color: "#444",
+      lineHeight: 1.6,
+      marginTop: 6
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontWeight: 600,
+      color: ex.color,
+      marginBottom: 4
+    }
+  }, ex.name[lang]), hasType("box") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 3
+    }
+  }, "📦 ", /*#__PURE__*/React.createElement("b", null, tl("Cuadrado", "Box", "Boks")), tl(": 3x3m - 4 conos (10-15cm) en esquinas, cintas conectando", ": 3x3m - 4 cones (10-15cm) at corners, tapes connecting", ": 3x3m - 4 kjegler (10-15cm) i hjorner, band")), hasType("circle") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 3
+    }
+  }, "⭕ ", /*#__PURE__*/React.createElement("b", null, tl("Circulo", "Circle", "Sirkel")), tl(": marcado con cinta/tiza en el suelo", ": marked with tape/chalk on ground", ": merket med tape/kritt")), hasType("hurdle") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 3
+    }
+  }, "🏗 ", /*#__PURE__*/React.createElement("b", null, tl("Vallas", "Hurdles", "Hindre")), tl(": 2 postes + barra, altura segun perro (max 60cm)", ": 2 posts + bar, height per dog (max 60cm)", ": 2 stolper + stang, hoyde etter hund (maks 60cm)")), hasType("cones") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 3
+    }
+  }, "🔶 ", /*#__PURE__*/React.createElement("b", null, tl("Conos", "Cones", "Kjegler")), tl(": grupo 3-6 conos (40-50cm), area 60-80cm", ": group 3-6 cones (40-50cm), area 60-80cm", ": gruppe 3-6 kjegler (40-50cm), areal 60-80cm")), hasType("dumbbell") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 3
+    }
+  }, "🪵 ", /*#__PURE__*/React.createElement("b", null, "Apport"), tl(": de madera, tamano apropiado", ": wooden, appropriate size", ": i tre, passende storrelse")), hasType("scent") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 3
+    }
+  }, "👃 ", /*#__PURE__*/React.createElement("b", null, tl("Objetos olfato", "Scent objects", "Luktobjekter")), tl(": objetos madera (2x2x10cm) en fila", ": wood objects (2x2x10cm) in row", ": treobjekter (2x2x10cm) i rad")), hasType("dogs") && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginBottom: 3
+    }
+  }, "🐕 ", /*#__PURE__*/React.createElement("b", null, tl("Grupo", "Group", "Gruppe")), tl(": 3-6 perros, ~3m entre si", ": 3-6 dogs, ~3m apart", ": 3-6 hunder, ~3m mellom")), dists && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 4,
+      paddingTop: 4,
+      borderTop: "1px solid #eee",
+      fontStyle: "italic",
+      color: "#6b6a65"
+    }
+  }, "📏 ", tl("Distancias", "Distances", "Avstander"), ": ", dists));
+}
+
+/* ═══ SCORE SCREEN ═══ */
+function ScoreScreen({
+  t,
+  lang,
+  cls,
+  exercises
+}) {
+  const [handler, setH] = useState("");
+  const [dog, setD] = useState("");
+  const [grades, setG] = useState(() => exercises.map(() => ""));
+  useEffect(() => setG(exercises.map(() => "")), [cls, exercises.length]);
+  const ok = v => {
+    if (v === "" || v === "0") return true;
+    const n = parseFloat(v);
+    if (isNaN(n)) return false;
+    if (n === 0) return true;
+    return n >= 5 && n <= 10 && n % 0.5 === 0;
+  };
+  const pts = (g, c) => {
+    const n = parseFloat(g);
+    return isNaN(n) ? 0 : n * c;
+  };
+  const tot = exercises.reduce((s, e, i) => s + pts(grades[i], e.coeff), 0);
+  const max = exercises.reduce((s, e) => s + 10 * e.coeff, 0);
+  const pct = max > 0 ? tot / max * 100 : 0;
+  const res = pct >= 80 ? {
+    l: t.score.excellent,
+    c: "#2e7d32"
+  } : pct >= 70 ? {
+    l: t.score.veryGood,
+    c: "#1565c0"
+  } : pct >= 60 ? {
+    l: t.score.good,
+    c: "#f59e0b"
+  } : {
+    l: t.score.notClassified,
+    c: "#c62828"
+  };
+  const exp = () => {
+    let tx = `ObediTrack — ${t.cls.label} ${cls}\n${t.score.handler}: ${handler}\n${t.score.dog}: ${dog}\n\n`;
+    exercises.forEach((e, i) => tx += `${e.num} ${e.name[lang]} (×${e.coeff}): ${grades[i] || "-"} → ${pts(grades[i], e.coeff)}\n`);
+    tx += `\n${t.score.total}: ${tot.toFixed(1)}/${max} (${pct.toFixed(1)}%)\n${t.score.result}: ${res.l}`;
+    navigator.clipboard.writeText(tx).catch(() => {});
+    alert(lang === "es" ? "Copiado" : lang === "en" ? "Copied" : "Kopiert");
+  };
+  const expImg = () => {
+    try {
+      const c = document.createElement("canvas");
+      const w = 500;
+      const rh = exercises.length * 22 + 160;
+      c.width = w;
+      c.height = rh;
+      const x = c.getContext("2d");
+      x.fillStyle = "#fff";
+      x.fillRect(0, 0, w, rh);
+      x.fillStyle = "#1d5c2e";
+      x.font = "bold 16px sans-serif";
+      x.textAlign = "center";
+      x.fillText("ObediTrack - " + t.cls.label + " " + cls, w / 2, 24);
+      x.fillStyle = "#333";
+      x.font = "12px sans-serif";
+      x.fillText(t.score.handler + ": " + (handler || "-") + "    " + t.score.dog + ": " + (dog || "-"), w / 2, 44);
+      var y = 64;
+      x.fillStyle = "#f2f1ed";
+      x.fillRect(10, y - 14, w - 20, 20);
+      x.fillStyle = "#333";
+      x.font = "bold 10px sans-serif";
+      x.textAlign = "left";
+      x.fillText(t.score.exercise, 16, y);
+      x.fillText(t.score.coeff, 310, y);
+      x.fillText(t.score.grade, 365, y);
+      x.fillText(t.score.points, 425, y);
+      y += 20;
+      exercises.forEach(function (e, i) {
+        var p = pts(grades[i], e.coeff);
+        x.fillStyle = i % 2 === 0 ? "#fff" : "#fafaf8";
+        x.fillRect(10, y - 12, w - 20, 20);
+        x.fillStyle = e.color;
+        x.font = "bold 10px sans-serif";
+        x.textAlign = "left";
+        x.fillText(e.num, 16, y);
+        x.fillStyle = "#333";
+        x.font = "10px sans-serif";
+        x.fillText(e.name[lang], 48, y);
+        x.fillText("x" + e.coeff, 310, y);
+        x.fillText(grades[i] || "-", 370, y);
+        x.fillStyle = p > 0 ? "#1d5c2e" : "#999";
+        x.font = "bold 10px sans-serif";
+        x.fillText(p.toFixed(1), 425, y);
+        y += 22;
+      });
+      y += 10;
+      x.fillStyle = "#e8f5ec";
+      x.fillRect(10, y - 14, w - 20, 55);
+      x.fillStyle = "#1d5c2e";
+      x.font = "bold 14px sans-serif";
+      x.textAlign = "center";
+      x.fillText(t.score.total + ": " + tot.toFixed(1) + " / " + max + "  (" + pct.toFixed(1) + "%)", w / 2, y + 6);
+      x.fillStyle = res.c;
+      x.font = "bold 16px sans-serif";
+      x.fillText(res.l, w / 2, y + 28);
+      var link = document.createElement("a");
+      link.download = "obeditrack_score_" + cls + ".png";
+      link.href = c.toDataURL("image/png");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error(err);
+      alert("Export error");
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: 14
+    }
+  }, /*#__PURE__*/React.createElement("h2", {
+    style: {
+      fontSize: 15,
+      fontWeight: 700,
+      marginBottom: 8
+    }
+  }, t.score.title), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: 6,
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    placeholder: t.score.handler,
+    value: handler,
+    onChange: e => setH(e.target.value),
+    style: {
+      padding: "7px 8px",
+      border: "1px solid #d4d3cd",
+      borderRadius: 6,
+      fontFamily: "inherit",
+      fontSize: 12
+    }
+  }), /*#__PURE__*/React.createElement("input", {
+    placeholder: t.score.dog,
+    value: dog,
+    onChange: e => setD(e.target.value),
+    style: {
+      padding: "7px 8px",
+      border: "1px solid #d4d3cd",
+      borderRadius: 6,
+      fontFamily: "inherit",
+      fontSize: 12
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      overflowX: "auto"
+    }
+  }, /*#__PURE__*/React.createElement("table", {
+    style: {
+      width: "100%",
+      borderCollapse: "collapse",
+      fontSize: 11
+    }
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
+    style: {
+      background: "#f2f1ed"
+    }
+  }, /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: "6px",
+      textAlign: "left",
+      borderBottom: "2px solid #d4d3cd"
+    }
+  }, t.score.exercise), /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: "6px",
+      textAlign: "center",
+      borderBottom: "2px solid #d4d3cd",
+      width: 35
+    }
+  }, t.score.coeff), /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: "6px",
+      textAlign: "center",
+      borderBottom: "2px solid #d4d3cd",
+      width: 50
+    }
+  }, t.score.grade), /*#__PURE__*/React.createElement("th", {
+    style: {
+      padding: "6px",
+      textAlign: "center",
+      borderBottom: "2px solid #d4d3cd",
+      width: 50
+    }
+  }, t.score.points))), /*#__PURE__*/React.createElement("tbody", null, exercises.map((e, i) => {
+    const p = pts(grades[i], e.coeff),
+      v = ok(grades[i]);
+    return /*#__PURE__*/React.createElement("tr", {
+      key: e.id,
+      style: {
+        borderBottom: "1px solid #e8e7e3"
+      }
+    }, /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: 5
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontWeight: 700,
+        color: e.color,
+        fontSize: 10,
+        marginRight: 3
+      }
+    }, e.num), e.name[lang]), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: 5,
+        textAlign: "center",
+        color: "#6b6a65"
+      }
+    }, "\xD7", e.coeff), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: 3
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "text",
+      value: grades[i],
+      onChange: ev => setG(pr => pr.map((g, j) => j === i ? ev.target.value : g)),
+      style: {
+        width: "100%",
+        padding: "3px 4px",
+        textAlign: "center",
+        border: `1px solid ${v ? "#d4d3cd" : "#ef4444"}`,
+        borderRadius: 5,
+        fontFamily: "inherit",
+        fontSize: 12,
+        fontWeight: 600,
+        background: v ? "#fff" : "#fef2f2"
+      }
+    })), /*#__PURE__*/React.createElement("td", {
+      style: {
+        padding: 5,
+        textAlign: "center",
+        fontWeight: 700,
+        color: p > 0 ? "#1d5c2e" : "#9c9a92"
+      }
+    }, p.toFixed(1)));
+  })))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 10,
+      padding: 12,
+      background: "#f8fdf9",
+      borderRadius: 8,
+      border: "1px solid #c8e6c9"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 700
+    }
+  }, t.score.total), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 700,
+      fontSize: 15
+    }
+  }, tot.toFixed(1), "/", max)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: 4
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#6b6a65"
+    }
+  }, t.score.pct), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 700
+    }
+  }, pct.toFixed(1), "%")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center"
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: "#6b6a65"
+    }
+  }, t.score.result), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 800,
+      fontSize: 13,
+      color: res.c,
+      padding: "2px 8px",
+      background: `${res.c}15`,
+      borderRadius: 5
+    }
+  }, res.l)), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 6,
+      height: 6,
+      background: "#e8e7e3",
+      borderRadius: 3,
+      overflow: "hidden"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      height: "100%",
+      width: `${Math.min(pct, 100)}%`,
+      background: res.c,
+      borderRadius: 3,
+      transition: "width .3s"
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 9,
+      color: "#9c9a92",
+      marginTop: 4
+    }
+  }, t.score.validGrades), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: "flex",
+      gap: 4,
+      marginTop: 8
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: () => setG(exercises.map(() => "")),
+    style: {
+      padding: "6px 14px",
+      borderRadius: 6,
+      border: "1px solid #d4d3cd",
+      background: "#fff",
+      fontFamily: "inherit",
+      fontSize: 11,
+      cursor: "pointer"
+    }
+  }, t.score.reset), /*#__PURE__*/React.createElement("button", {
+    onClick: exp,
+    style: {
+      padding: "6px 14px",
+      borderRadius: 6,
+      border: "1px solid #d4d3cd",
+      background: "#fff",
+      fontFamily: "inherit",
+      fontSize: 11,
+      cursor: "pointer"
+    }
+  }, t.score.exportTxt), /*#__PURE__*/React.createElement("button", {
+    onClick: expImg,
+    style: {
+      padding: "6px 14px",
+      borderRadius: 6,
+      border: "none",
+      background: "#1d5c2e",
+      color: "#fff",
+      fontFamily: "inherit",
+      fontSize: 11,
+      fontWeight: 700,
+      cursor: "pointer"
+    }
+  }, t.score.exportImg)));
+}
+ReactDOM.render(React.createElement(App),document.getElementById("root"));
+})();
+</script>
+</body>
+</html>
